@@ -64,7 +64,11 @@ expanded using rdf_include_reifications/3 and/or rdf_include_labels/3.
 	rdf_bounded_description(3, +, +, -),
 	resource_CBD(3, +, -),
 	graph_CBD(3, +, -),
-	rdf_include_reifications(3, +, -).
+	rdf_include_reifications(3, +, -),
+	rdf_include_labels(3, +, -),
+	label_triples(+, 3, ?, ?),
+	label_triple(+, 3, -).
+
 
 
 		 /*******************************
@@ -221,10 +225,6 @@ rdf_include_labels(Expand, Graph0, Graph) :-
 	->  Graph = Graph0
 	;   append(Graph0, LabelRDF, Graph)
 	).
-
-:- meta_predicate
-	label_triples(+, 3, ?, ?),
-	label_triple(+, 3, -).
 
 label_triples([], _) --> [].
 label_triples([rdf(_,_,O)|T], Expand) -->
