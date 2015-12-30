@@ -78,7 +78,7 @@ menu([_-[Item]|T]) --> !,
 	menu(T).
 menu([Key-Items|T]) -->
 	{ menu_label(Key, Key, Label) },
-	html(li([ a([Label]),
+	html(li([ Label,
 		  ul(\menu_items(Items))
 		])),
 	menu(T).
