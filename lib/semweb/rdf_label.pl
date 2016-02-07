@@ -65,7 +65,7 @@ issues.
 	label_property(r).
 
 					% this dependency is not ideal ...
-:- rdf_register_ns(foaf, 'http://xmlns.com/foaf/0.1/').
+:- rdf_register_prefix(foaf, 'http://xmlns.com/foaf/0.1/').
 
 %%	label_property(?Property) is nondet.
 %

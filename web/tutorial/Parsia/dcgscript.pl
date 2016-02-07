@@ -1,8 +1,8 @@
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(http/html_write)).
 
-:- rdf_register_ns(rss, 'http://purl.org/rss/1.0/').
-:- rdf_register_ns(dc, 'http://purl.org/dc/elements/1.1/').
+:- rdf_register_prefix(dc, 'http://purl.org/dc/elements/1.1/').
+:- rdf_register_prefix(rss, 'http://purl.org/rss/1.0/').
 
 rss_to_html_list(Resource, Source, Target) :-
 	rdf_load(Source),

@@ -67,8 +67,8 @@
 :- setting(cpack:server, atom, 'http://cliopatria.swi-prolog.org/',
 	   'Address of the fallback server').
 
-:- rdf_register_ns(cpack, 'http://cliopatria.swi-prolog.org/schema/cpack#').
-:- rdf_register_ns(foaf,  'http://xmlns.com/foaf/0.1/').
+:- rdf_register_prefix(cpack, 'http://cliopatria.swi-prolog.org/schema/cpack#').
+:- rdf_register_prefix(foaf,  'http://xmlns.com/foaf/0.1/').
 
 %%	cpack_install(+Install) is semidet.
 %

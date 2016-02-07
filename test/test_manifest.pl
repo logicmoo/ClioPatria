@@ -83,28 +83,28 @@ Prolog database as mf_rdf(S,P,O).
 
 
 % namespaces used to process the manifests and test suite.
-:- rdf_register_ns(mf,
+:- rdf_register_prefix(mf,
 		   'http://www.w3.org/2001/sw/DataAccess/tests/test-manifest#').
-:- rdf_register_ns(mfx,
+:- rdf_register_prefix(mfx,
 		   'http://jena.hpl.hp.com/2005/05/test-manifest-extra#').
-:- rdf_register_ns(qt,
+:- rdf_register_prefix(qt,
 		   'http://www.w3.org/2001/sw/DataAccess/tests/test-query#').
-:- rdf_register_ns(ut,
+:- rdf_register_prefix(ut,
 		   'http://www.w3.org/2009/sparql/tests/test-update#').
-:- rdf_register_ns(sd,
+:- rdf_register_prefix(sd,
 		   'http://www.w3.org/ns/sparql-service-description#').
-:- rdf_register_ns(r,
+:- rdf_register_prefix(r,
 		   'http://www.w3.org/2001/sw/DataAccess/tests/result-set#').
-:- rdf_register_ns(entailment,
+:- rdf_register_prefix(entailment,
 		   'http://www.w3.org/ns/entailment/').
 
 % namespaces used in some of the test-suites to enhance readability.
-:- rdf_register_ns(tbool,
+:- rdf_register_prefix(tbool,
 		   'http://www.w3.org/2001/sw/DataAccess/tests/data/ValueTesting/boolean-0#').
-:- rdf_register_ns(texttype,
+:- rdf_register_prefix(texttype,
 		   'http://www.w3.org/2001/sw/DataAccess/tests/data/ValueTesting/extendedType-0#').
-:- rdf_register_ns(tpromote, 'http://www.w3.org/2001/sw/DataAccess/tests/data/ValueTesting/typePromotion-0#').
-:- rdf_register_ns(ex, 'http://example.org/#').
+:- rdf_register_prefix(tpromote, 'http://www.w3.org/2001/sw/DataAccess/tests/data/ValueTesting/typePromotion-0#').
+:- rdf_register_prefix(ex, 'http://example.org/#').
 
 
 		 /*******************************

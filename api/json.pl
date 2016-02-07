@@ -85,9 +85,7 @@ json_describe(Request) :-
 %	Return a JSON object mapping prefixes to URIs.
 
 json_prefixes(_Request) :-
-	findall(Prefix-URI,
-		rdf_current_ns(Prefix, URI),
-		Pairs),
+	findall(Prefix-URI, rdf_current_prefix(Prefix, URI), Pairs),
 	dict_pairs(Dict, prefixes, Pairs),
 	reply_json(Dict).
 
