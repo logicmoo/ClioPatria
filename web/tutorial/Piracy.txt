@@ -16,7 +16,7 @@ The pirates domain is a geospatial domain. To keep this tutorial simple
 and considering the size of the dataset, we use naive Prolog
 generate-and-test for answering queries. In realistic settings one needs
 proper spatial indexing. This is implemented in the [[space
-pachkage][http://www.swi-prolog.org/pldoc/package/space.html]]
+package][http://www.swi-prolog.org/pldoc/package/space.html]]
 
 An LOP demo is [[online][http://semanticweb.cs.vu.nl/poseidon/ns]]
 
