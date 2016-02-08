@@ -52,6 +52,7 @@
 :- if(exists_source(library(uuid))).
 :- use_module(library(uuid)).
 :- endif.
+:- use_module(rdfql(sparql)).
 
 :- discontiguous
 	term_expansion/2.
