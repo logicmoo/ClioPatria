@@ -170,12 +170,14 @@ menu_item(300=admin/statistics,				'Statistics').
 
 menu_item(100=user/login_form,				'Login') :-
 	\+ someone_logged_on.
-menu_item(100=current_user/user_logout,			'Logout') :-
+menu_item(100=current_user/openid_userpage,		'User page') :-
 	someone_logged_on.
 menu_item(200=current_user/change_password_form,	'Change password') :-
 	local_user_logged_on.
 menu_item(300=current_user/my_openid_page,		'My OpenID page') :-
 	open_id_user(_).
+menu_item(400=current_user/user_logout,			'Logout') :-
+	someone_logged_on.
 
 sort_menu_popups(List, Sorted) :-
 	map_list_to_pairs(popup_order, List, Keyed),

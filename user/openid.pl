@@ -205,8 +205,11 @@ http_openid:openid_hook(grant(Request, Options)) :-
 openid_userpage(Request) :-
 	memberchk(path(Path), Request),
 	atomic_list_concat(Parts, /, Path),
-	append(_, [user, User], Parts), !,
-	file_base_name(Path, User),
+	(   append(_, [user, User], Parts),
+	    file_base_name(Path, User)
+	->  true
+	;   current_user(User)
+	),
 	(   current_user(User)
 	->  findall(P, user_property(User, P), Props),
 	    reply_html_page(cliopatria(default),
