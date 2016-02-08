@@ -56,12 +56,12 @@
 :- use_module(library(option)).
 :- use_module(library(apply)).
 
-:- use_module(components(label)).
-:- use_module(components(simple_search)).
-:- use_module(components(graphviz)).
-:- use_module(components(basics)).
 :- use_module(api(lod_crawler)).
 :- use_module(api(sesame)).
+:- use_module(components(basics)).
+:- use_module(components(graphviz)).
+:- use_module(components(label)).
+:- use_module(components(simple_search)).
 :- use_module(library(semweb/rdf_abstract)).
 :- use_module(library(semweb/rdf_label)).
 
@@ -114,18 +114,6 @@ that allow back-office applications to reuse this infrastructure.
 	table_rows(3, +, ?, ?),
 	table_rows_top_bottom(3, +, +, +, ?, ?),
 	html_property_table(?, 0, ?, ?).
-
-
-cp_table(Content) -->
-	html(table(class=[block,table,'table-condensed','table-striped'], Content)).
-
-cp_table_header(L) -->
-	html(thead(tr(\cp_table_header_items(L)))).
-
-cp_table_header_items([H|T]) -->
-	html(th(H)),
-	cp_table_header_items(T).
-cp_table_header_items([]) --> [].
 
 
 %%	list_graphs(+Request)

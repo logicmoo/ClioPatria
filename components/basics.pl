@@ -28,7 +28,9 @@
 */
 
 :- module(html_basics,
-	  [ hidden//2,			% +Name, +Value
+	  [ cp_table//1,		% :Content
+	    cp_table_header//1,		% +Headers:list(atom)
+	    hidden//2,			% +Name, +Value
 	    form_input//2,		% +Label, +Input
 	    form_submit//1,		% +Label
 	    n//2,			% +Format, +Value
@@ -45,9 +47,10 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_wrapper)).
 
-:- html_meta((
+:- html_meta
+	cp_table(html, ?, ?),
 	form_input(html, html, ?, ?),
-	sort_th(+, +, html, ?, ?))).
+	sort_th(+, +, html, ?, ?).
 
 /** <module> Simple Small HTML components
 */
@@ -127,7 +130,16 @@ class(Value, Class) :-
 	;   Class = value
 	).
 
+cp_table(Content) -->
+	html(table(class=[block,table,'table-condensed','table-striped'], Content)).
 
+cp_table_header(L) -->
+	html(thead(tr(\cp_table_header_items(L)))).
+
+cp_table_header_items([H|T]) -->
+	html(th(H)),
+	cp_table_header_items(T).
+cp_table_header_items([]) --> [].
 
 
 %%	sort_th(+Field, +ByNow, :Label)

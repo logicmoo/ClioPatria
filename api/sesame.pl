@@ -53,8 +53,8 @@
 :- use_module(library(option)).
 :- use_module(library(apply)).
 :- use_module(library(settings)).
-:- use_module(components(query)).
 :- use_module(components(basics)).
+:- use_module(components(query)).
 :- use_module(components(messages)).
 
 :- meta_predicate(api_action2(+,0,+,+)).
