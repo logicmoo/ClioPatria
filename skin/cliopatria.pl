@@ -94,6 +94,7 @@ ClioPatria skin.
 :- html_resource(default,
 		 [ virtual(true),
 		   requires([ css('bootstrap-theme'),
+			      css('cliopatria.css'),
 			      js(bootstrap),
 			      js('cliopatria.js')
 			    ])
@@ -123,7 +124,11 @@ cp_body(Body) -->
 	html(
 	  body(class([cliopatria,'yui-skin-sam']), [
 	    \cp_navbar,
-	    div([class=content,id='cp-content'], Body),
+	    div(class='container-fluid',
+	      div(class=row,
+	        div(class='col-xs-10', Body)
+	      )
+	    ),
 	    \cp_footer
 	  ])
 	).
@@ -184,7 +189,11 @@ cp_search -->
 	simple_search_form([value(p(q))]).
 
 cp_footer -->
-	html(div([class=footer,id='cp-footer'], \address)).
+	html(
+	  footer([class='bs-docs-footer',role=contentinfo],
+	    div(class=container, \address)
+	  )
+	).
 
 
 %%	address//

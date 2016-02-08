@@ -115,6 +115,19 @@ that allow back-office applications to reuse this infrastructure.
 	table_rows_top_bottom(3, +, +, +, ?, ?),
 	html_property_table(?, 0, ?, ?).
 
+
+cp_table(Content) -->
+	html(table(class=[block,table,'table-condensed','table-striped'], Content)).
+
+cp_table_header(L) -->
+	html(thead(tr(\cp_table_header_items(L)))).
+
+cp_table_header_items([H|T]) -->
+	html(th(H)),
+	cp_table_header_items(T).
+cp_table_header_items([]) --> [].
+
+
 %%	list_graphs(+Request)
 %
 %	Display a page holding a table with all RDF graphs.  The graphs
@@ -165,24 +178,16 @@ graph_table(Graphs, Options) -->
 	  graph_actions(Options, ActionOptions)
 	},
 	html_requires(css('rdf.css')),
-	html(form([ action(Action),
-		    class('graph-table')
-		  ],
-		  [ table(class(block),
-			  [ \graph_table_header
-			  | \table_rows_top_bottom(
-				 graph_row(ActionOptions), Graphs,
-				 TopMax, BottomMax)
-			  ]),
-		    \multigraph_actions(ActionOptions)
-		  ])),
+	html(
+	  form([action(Action),class('graph-table')], [
+	    \cp_table([
+	      \cp_table_header(['RDF Graph','Triples','Persistency']),
+	      \table_rows_top_bottom(graph_row(ActionOptions), Graphs, TopMax, BottomMax)
+	    ]),
+	    \multigraph_actions(ActionOptions)
+	  ])
+	),
 	mgraph_action_script.
-
-graph_table_header -->
-	html(tr([ th('RDF Graph'),
-		  th('Triples'),
-		  th('Persistency')
-		])).
 
 graph_row(_, virtual(total)) --> !,
 	{ rdf_statistics(triples(Count))
@@ -343,17 +348,20 @@ list_graph(Request) :-
 	;   http_404([], Request)
 	),
 	reply_html_page(cliopatria(default),
-			title('RDF Graph ~w'-[Graph]),
-			[ h1('Summary information for graph "~w"'-[Graph]),
-			  \simple_search_form([ id(ac_find_in_graph),
-						filter(graph(Graph)),
-						label('Search this graph')
-					      ]),
-			  \graph_info(Graph),
-			  \graph_as_resource(Graph, []),
-			  \graph_persistency(Graph),
-			  \graph_actions(Graph)
-			]).
+	  title('RDF Graph ~w'-[Graph]),
+	  [
+	    h1('Summary information for graph "~w"'-[Graph]),
+	    div(class=row, [
+	      div(class='col-xs-8', \graph_info(Graph)),
+	      div(class='col-xs-4',
+	        \simple_search_form([id(ac_find_in_graph),filter(graph(Graph)),label('Search this graph')])
+	      )
+	    ]),
+	    \graph_as_resource(Graph, []),
+	    \graph_persistency(Graph),
+	    \graph_actions(Graph)
+	  ]
+	).
 
 %%	graph_info(+Graph)//
 %
@@ -462,41 +470,30 @@ graph_persistency(Graph) -->
 	  ;   rdf_snapshot_file(Graph, _)
 	  )
 	}, !,
-	html([ h1('Persistency information'),
-	       table(class(block),
-		     [ tr([ td(class('no-border'),[]),
-			    th('File'), th('Size'),th('Modified'),
-			    td(class('no-border'),[])
-			  ]),
-		       \graph_shapshot(Graph),
-		       \graph_journal(Graph)
-		     ])
-	     ]).
+	html([
+	  h1('Persistency information'),
+	  \cp_table([
+	    \cp_table_header(['Role','File','Size','Modified']),
+	    \graph_snapshot(Graph),
+	    \graph_journal(Graph)
+	  ])
+	]).
 graph_persistency(Graph) -->
 	{ rdf_graph_property(Graph, persistent(true))
 	}, !,
 	html([ h1('Persistency information'),
 	       p('The graph has no associated persistency files')
 	     ]).
-graph_persistency(_Graph) -->
-	[].
+graph_persistency(_Graph) --> [].
 
-graph_shapshot(Graph) -->
-	{ rdf_snapshot_file(Graph, File)
-	},
-	html(tr([ th(class('file-role'), 'Snapshot'),
-		  \file_info(File)
-		])).
-graph_shapshot(_) --> [].
-
+graph_snapshot(Graph) -->
+	{rdf_snapshot_file(Graph, File)},
+	html(tr([td('Snapshot'),\file_info(File)])).
+graph_snapshot(_) --> [].
 
 graph_journal(Graph) -->
-	{ rdf_journal_file(Graph, File)
-	},
-	html(tr([ th(class('file-role'), 'Journal'),
-		  \file_info(File),
-		  \flush_journal_button(Graph)
-		])).
+	{rdf_journal_file(Graph, File)},
+	html(tr([td('Journal'),\file_info(File),\flush_journal_button(Graph)])).
 graph_journal(_) --> [].
 
 flush_journal_button(Graph) -->
@@ -634,16 +631,10 @@ class_table(Pairs, Graph, Options) -->
 	  option(top_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	html(table(class(block),
-		   [ \class_table_header
-		   | \table_rows_top_bottom(class_row(Graph), Pairs,
-					    TopMax, BottomMax)
-		   ])).
-
-class_table_header -->
-	html(tr([ th('Class'),
-		  th('#Instances')
-		])).
+	cp_table([
+	  \cp_table_header(['Class','#Instances']),
+	  \table_rows_top_bottom(class_row(Graph), Pairs, TopMax, BottomMax)
+	]).
 
 class_row(Graph, Class) -->
 	{ atom(Class), !,
@@ -839,16 +830,10 @@ instance_table(Pairs, Options) -->
 	  option(top_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	html(table(class(block),
-		   [ \instance_table_header
-		   | \table_rows_top_bottom(instance_row(Options), Pairs,
-					    TopMax, BottomMax)
-		   ])).
-
-instance_table_header -->
-	html(tr([ th('Instance'),
-		  th('#Properties')
-		])).
+	cp_table([
+	  \cp_table_header(['Instance','#Properties']),
+	  \table_rows_top_bottom(instance_row(Options), Pairs, TopMax, BottomMax)
+	]).
 
 instance_row(Options, R-C) -->
 	html([ td(\rdf_link(R, Options)),
@@ -881,20 +866,18 @@ predicate_table(Preds, Graph, Options) -->
 	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	html(table(class(block),
-		   [ \predicate_table_header
-		   | \table_rows_top_bottom(predicate_row(Graph), Preds,
-					    TopMax, BottomMax)
-		   ])).
+	cp_table([
+	  \cp_table_header([
+	    'Predicate',
+	    '#Triples',
+	    '#Distinct subjects',
+	    '#Distinct objects',
+	    'Domain(s)',
+	    'Range(s)'
+	  ]),
+	  \table_rows_top_bottom(predicate_row(Graph), Preds, TopMax, BottomMax)
+	]).
 
-predicate_table_header -->
-	html(tr([ th('Predicate'),
-		  th('#Triples'),
-		  th('#Distinct subjects'),
-		  th('#Distinct objects'),
-		  th('Domain(s)'),
-		  th('Range(s)')
-		])).
 
 %%	predicate_row(?Graph, +Pred) is det.
 
@@ -1109,11 +1092,10 @@ resource_frequency_table(Pairs, Options) -->
 	  option(side(Side), Options)
 	},
 	html_requires(css('rdf.css')),
-	html(table(class(block),
-		   [ \resource_table_header(Options)
-		   | \table_rows_top_bottom(resource_row(Pred, Side, Options), Pairs,
-					    TopMax, BottomMax)
-		   ])).
+	cp_table([
+	  \resource_table_header(Options),
+	  \table_rows_top_bottom(resource_row(Pred, Side, Options), Pairs, TopMax, BottomMax)
+	]).
 
 resource_table_header(Options) -->
 	{ option(label(Label), Options, 'Resource'),
@@ -1128,10 +1110,10 @@ resource_table_header(Options) -->
 	      A2 = []
 	  )
 	},
-	html(tr([ th(A1, Label),
+	html(thead(tr([ th(A1, Label),
 		  th(A2, 'Count'),
 		  \skosmap_head(Options)
-		])).
+		]))).
 
 skosmap_head(Options) -->
 	{ option(skosmap(true), Options) }, !,
@@ -1477,12 +1459,10 @@ local_view(URI, Graph, Options) -->
 	(   { Pairs \== []
 	    }
 	->  html_requires(css('rdf.css')),
-	    html(table(class(block),
-		       [ \lview_header(Options)
-		       | \table_rows_top_bottom(lview_row(Options, URI, Graphs),
-						Pairs,
-						TopMax, BottomMax)
-		       ])),
+	    cp_table([
+	      \lview_header(Options),
+	      \table_rows_top_bottom(lview_row(Options, URI, Graphs), Pairs, TopMax, BottomMax)
+	    ]),
 	    graph_footnotes(Graphs, Options)
 	;   { lod_uri_graph(URI, LODGraph),
 	      rdf_graph(LODGraph)
@@ -1889,22 +1869,16 @@ triple_table(Triples, Pred, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(top_max(BottomMax), Options, 500)
 	},
-	html(table(class(block),
-		   [ \spo_header(Pred)
-		   | \table_rows_top_bottom(spo_row(Options, Pred), Triples,
-					    TopMax, BottomMax)
-		   ])).
+	cp_table([
+	  \spo_header(Pred),
+	  \table_rows_top_bottom(spo_row(Options, Pred), Triples, TopMax, BottomMax)
+	]).
 
 spo_header(P) -->
 	{ nonvar(P) },
-	html(tr([ th('Subject'),
-		  th('Object')
-		])).
+	cp_table_header(['Subject','Object']).
 spo_header(_) -->
-	html(tr([ th('Subject'),
-		  th('Predicate'),
-		  th('Object')
-		])).
+	cp_table_header(['Subject','Predicate','Object']).
 
 spo_row(Options, Pred, rdf(S,_,O)) -->
 	{ nonvar(Pred) }, !,
@@ -2001,16 +1975,13 @@ otriple_table(SPList, Object, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(top_max(BottomMax), Options, 500)
 	},
-	html(table(class(block),
-		   [ \sp_header(Object)
-		   | \table_rows_top_bottom(sp_row(Options,Object), SPList,
-					    TopMax, BottomMax)
-		   ])).
+	cp_table([
+	  \sp_header(Object),
+	  \table_rows_top_bottom(sp_row(Options,Object), SPList, TopMax, BottomMax)
+	]).
 
 sp_header(_) -->
-	html(tr([ th('Subject'),
-		  th('Predicate')
-		])).
+	cp_table_header(['Subject','Predicate']).
 
 sp_row(Options, _O, S-P) -->
 	html([ td(class(subject),   \rdf_link(S, Options)),
@@ -2204,11 +2175,10 @@ rdf_table(Triples, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(top_max(BottomMax), Options, 500)
 	},
-	html(table(class(block),
-		   [ tr([ th('Subject'), th('Predicate'), th('Object') ])
-		   | \table_rows_top_bottom(triple, Triples,
-					    TopMax, BottomMax)
-		   ])).
+	cp_table([
+	  cp_table_header(['Subject','Predicate','Object']),
+	  \table_rows_top_bottom(triple, Triples, TopMax, BottomMax)
+	]).
 
 triple(rdf(S,P,O)) -->
 	html([ td(class(subject),   \rdf_link(S)),
@@ -2231,8 +2201,7 @@ triple(rdf(S,P,O)) -->
 
 html_property_table(Template, Goal) -->
 	{ findall(Template, Goal, Rows) },
-	html(table(class(block),
-		   \table_rows(prow, Rows))).
+	cp_table(\table_rows(prow, Rows)).
 
 prow(Row) -->
 	{ Row =.. [_,H|Cells],
@@ -2369,18 +2338,13 @@ alt_formats([H|T], Request) -->
 	).
 
 ns_table(html, Pairs) -->
-	html(table(class(block),
-		   [ \prefix_table_header,
-		     \table_rows(prefix_row, Pairs)
-		   ])).
+	cp_table([
+	  \cp_table_header(['Prefix','URI']),
+	  \table_rows(prefix_row, Pairs)
+	]).
 ns_table(turtle, Pairs) -->
 	html(pre(class(code),
 		 \turtle_prefixes(Pairs))).
-
-prefix_table_header -->
-	html(tr([ th('Prefix'),
-		  th('URI')
-		])).
 
 prefix_row(Prefix-URI) -->
 	html([ td(Prefix),
