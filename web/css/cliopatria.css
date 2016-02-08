@@ -59,21 +59,6 @@ address.footer img {
   vertical-align: top;
 }
 
-div.messages, div.textbox
-{ border-width: 1px;
-  border-style: dotted;
-  border-color: #A0A0A0;
-  padding: 5px;
-  margin-top: 2ex;
-  margin-left: 5%;
-  width: 90%;
-  overflow-x: auto;
-}
-
-div.messages pre
-{ margin: 0px;
-}
-
 .msg_informational
 { color: #007f00;
 }
