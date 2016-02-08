@@ -34,7 +34,6 @@
 	    n//2,			% +Format, +Value
 	    nc//2,			% +Format, +Value
 	    nc//3,			% +Format, +Value, +Options
-	    odd_even_row//3,		% +Row, -Next, :Content
 	    sort_th//3,			% +Field, +ByNow, :Content
 	    insert_html_file//1		% +FileSpec
 	  ]).
@@ -48,7 +47,6 @@
 
 :- html_meta((
 	form_input(html, html, ?, ?),
-	odd_even_row(+, -, html, ?, ?),
 	sort_th(+, +, html, ?, ?))).
 
 /** <module> Simple Small HTML components
@@ -130,18 +128,7 @@ class(Value, Class) :-
 	).
 
 
-%%	odd_even_row(+Row, -Next, :Content)//
-%
-%	Create odd/even alternating table rows from a DCG.
 
-odd_even_row(Row, Next, Content) -->
-	{ (   Row mod 2 =:= 0
-	  ->  Class = even
-	  ;   Class = odd
-	  ),
-	  Next is Row+1
-	},
-	html(tr(class(Class), Content)).
 
 %%	sort_th(+Field, +ByNow, :Label)
 %

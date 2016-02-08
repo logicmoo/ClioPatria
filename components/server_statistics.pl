@@ -65,7 +65,7 @@ rdf_call_statistics_table -->
 		   [ tr([ th(colspan(Cols), 'Indexed (SOPG)'),
 			  th('Calls')
 			]),
-		     \lookup_statistics(Lookup, 1)
+		     \lookup_statistics(Lookup)
 		   ])).
 
 rdf_call_stats(Lookup) :-
@@ -73,20 +73,17 @@ rdf_call_stats(Lookup) :-
 		rdf_statistics(lookup(Index, Count)),
 		Lookup).
 
-lookup_statistics([], _) -->
-	[].
-lookup_statistics([H|T], Row) -->
-	odd_even_row(Row, Next, \lookup_row(H)),
-	lookup_statistics(T, Next).
+lookup_statistics([H|T]) -->
+	html(tr(\lookup_row(H))),
+	lookup_statistics(T).
+lookup_statistics([], _) --> [].
 
 lookup_row(rdf(S,P,O)-Count) -->
 	html([ \i(S), \i(P), \i(O), \nc(human, Count)]).
 lookup_row(rdf(S,P,O,G)-Count) -->
 	html([\i(S), \i(P), \i(O), \i(G), \nc(human, Count)]).
 
-
-i(I) -->
-	html(td(class(instantiated), I)).
+i(I) --> html(td(class(instantiated), I)).
 
 
 %%	http_session_table//
@@ -102,7 +99,7 @@ http_session_table -->
 		     ],
 		     [ tr([th('User'), th('Real Name'),
 			   th('On since'), th('Idle'), th('From')])
-		     | \sessions(Sessions, 1)
+		     | \sessions(Sessions)
 		     ])
 	     ]).
 http_session_table -->
@@ -120,10 +117,10 @@ session(s(Idle, User, SessionID, Peer)) :-
 	;   User = (-)
 	).
 
-sessions([], _) --> [].
-sessions([H|T], Row) -->
-	odd_even_row(Row, Next, \session(H)),
-	sessions(T, Next).
+sessions([H|T]) -->
+	html(tr(\session(H))),
+	sessions(T).
+sessions([]) --> [].
 
 session(s(Idle, -, _SessionID, Peer)) -->
 	html([td(-), td(-), td(-), td(\idle(Idle)), td(\ip(Peer))]).
@@ -275,13 +272,13 @@ http_server_pool_table -->
 		     class(block)
 		   ],
 		   [ tr([th('Name'), th('Running'), th('Size'), th('Waiting'), th('Backlog')])
-		   | \server_pools(Sorted, 1)
+		   | \server_pools(Sorted)
 		   ])).
 
+server_pools([H|T]) -->
+	html(tr(\server_pool(H))),
+	server_pools(T).
 server_pools([], _) --> [].
-server_pools([H|T], Row) -->
-	odd_even_row(Row, Next, \server_pool(H)),
-	server_pools(T, Next).
 
 server_pool(Pool) -->
 	{ findall(P, thread_pool_property(Pool, P), List),
