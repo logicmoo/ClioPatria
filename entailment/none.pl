@@ -33,7 +33,7 @@
 	    rdf/4
 	  ]).
 :- use_module(rdfql(rdfql_runtime)).	% runtime tests
-:- use_module(library('semweb/rdf_db'),
+:- use_module(library(semweb/rdf_db),
 	      [ rdf/3,
 		rdf/4
 	      ]).

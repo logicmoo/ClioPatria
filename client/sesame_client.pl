@@ -45,8 +45,8 @@
 	    set_sesame_default/1	% +Option
 	  ]).
 :- use_module(library(rdf)).
-:- use_module(library('http/http_open')).
-:- use_module(library('http/http_client')).
+:- use_module(library(http/http_open)).
+:- use_module(library(http/http_client)).
 :- use_module(xml_result).
 :- use_module(library(rdf_write)).
 :- use_module(library(lists)).
