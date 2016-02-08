@@ -105,7 +105,8 @@ ClioPatria skin.
 %	pages with the Style cliopatria(_).
 
 :- multifile
-	user:body//2.
+	user:body//2,
+	user:head//2.
 
 user:body(cliopatria(Style), Body) -->
 	cliopatria:page_body(cliopatria(Style), Body), !.
@@ -129,6 +130,20 @@ user:body(cliopatria(_), Body) -->
 		    br(clear(all)),
 		    div([id('cp-footer'), class(footer)], \address)
 		  ])).
+
+user:head(cliopatria(_), Head) -->
+	html(
+	  head([
+	    \meta(author, 'Jan Wielemaker & Wouter Beek & Jacco van Ossenbruggen & Michiel Hildebrand'),
+	    \meta(description, 'ClioPatria is a Prolog-based Triple Store'),
+	    \meta(keywords, 'Triple Store, Linked Open Data, Semantic Web, Prolog'),
+	    \meta(viewport, 'width=device-width,initial-scale=1')
+	  | Head
+	  ])
+	).
+
+meta(N, V) -->
+	html(meta([name=N,content=V], [])).
 
 cp_navbar -->
 	html(
