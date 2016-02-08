@@ -27,12 +27,22 @@
 	    view/1,
 	    in/1
 	  ]).
-:- use_module(serql).
 :- use_module(library(rdf_ntriples)).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(readutil)).
 :- use_module(library(debug)).
-:- use_module(rdfs_entailment, []).
+
+:- dynamic
+	user:file_search_path/2.
+:- multifile
+	user:file_search_path/2.
+
+user:file_search_path(entailment, '../entailment').
+user:file_search_path(library, '../lib').
+user:file_search_path(rdfql, '../rdfql').
+
+:- use_module(entailment(rdfs), []).
+:- use_module(rdfql(serql)).
 
 :- multifile
 	user:file_search_path/2.

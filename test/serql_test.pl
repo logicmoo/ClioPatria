@@ -28,8 +28,19 @@ the optimised code produces reasonable results. Can we compute and check
 the produced complexity?
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-:- use_module(rdf_entailment, []).
+:- dynamic
+    user:file_search_path/2.
+:- multifile
+    user:file_search_path/2.
+
+user:file_search_path(rdfql, '../rdfql').
+user:file_search_path(entailment, '../entailment').
+user:file_search_path(library, '../lib').
+
 :- use_module(library(semweb/rdf_db)).
+
+:- use_module(entailment(rdf), []).
+:- use_module(rdfql(serql)).
 
 % :- debug(serql(compiled)).
 

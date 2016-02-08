@@ -58,14 +58,7 @@
 	    query_test/1		% +NameOrIRI
 	  ]).
 
-user:file_search_path(rdfql, '../rdfql').
-user:file_search_path(entailment, '../entailment').
-user:file_search_path(library, '../lib').
-
 :- use_module(library(memfile)).
-:- use_module(rdfql(sparql_grammar)).
-:- use_module(rdfql(sparql)).
-:- use_module(rdfql(jena_functions)).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/turtle)).
 :- use_module(library(semweb/rdf_ntriples)).
@@ -75,10 +68,24 @@ user:file_search_path(library, '../lib').
 	      ]).
 :- use_module(library(apply)).
 :- use_module(library(settings)).
-:- use_module(test_manifest).
+
+:- dynamic
+	user:file_search_path/2.
+:- multifile
+	user:file_search_path/2.
+
+user:file_search_path(entailment, '../entailment').
+user:file_search_path(library, '../lib').
+user:file_search_path(rdfql, '../rdfql').
+
 :- use_module(entailment(rdf), []).
 :- use_module(entailment(none), []).
-					% Toplevel debugging utilities
+:- use_module(rdfql(jena_functions)).
+:- use_module(rdfql(sparql)).
+:- use_module(rdfql(sparql_grammar)).
+:- use_module(test_manifest).
+
+% Toplevel debugging utilities
 :- use_module(user:library(semweb/rdf_db)).
 :- use_module(library(semweb/rdf_turtle_write)).
 
