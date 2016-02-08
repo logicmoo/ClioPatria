@@ -1,3 +1,7 @@
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
 .bs-docs-footer {
     background-color: #2a2730;
     color: #99979c;

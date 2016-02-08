@@ -75,24 +75,31 @@ menu([_-[Item]|T]) --> !,
 	menu_item(Item),
 	menu(T).
 menu([Key-Items|T]) -->
-	{ menu_label(Key, Key, Label) },
+	{menu_label(Key, Key, Label)},
 	html(
 	  li(class=dropdown, [
-	    a([
-	      'aria-expanded'=false,
-	      'aria-haspopup'=true,
-	      class='dropdown-toggle',
-	      'data-toggle'=dropdown,
-	      href='#',
-	      role=button
-	    ], [
-	      Label,
-	      span(class=caret, [])
-	    ]),
+	    \menu_item_label(Label),
 	    ul(class='dropdown-menu',\menu_items(Items))
 	  ])
 	),
 	menu(T).
+
+menu_item_label(Label) -->
+	{Label = a(_,_)}, !,
+	html(Label).
+menu_item_label(Label) -->
+	{menu_item_label_attrs(Attrs)},
+	html(a([href='#'|Attrs], [Label,\caret])).
+
+caret --> html(span(class=caret, [])).
+
+menu_item_label_attrs([
+	'aria-expanded'=false,
+	'aria-haspopup'=true,
+	class='dropdown-toggle',
+	'data-toggle'=dropdown,
+	role=button
+]).
 
 menu_items([]) --> [].
 menu_items([H|T]) --> menu_item(H), menu_items(T).
@@ -209,8 +216,9 @@ menu_label(current_user, _Default, Label) :-
 	;   RealName = 'My account'
 	),
 	(   user_property(User, url(URL))
-	->  Label = a(href(URL), i(RealName))
-	;   Label = i(RealName)
+	->  menu_item_label_attrs(Attrs),
+	    Label = a([href(URL)|Attrs], [RealName,\caret])
+	;   Label = RealName
 	).
 menu_label(_, Default, Label) :-
 	id_to_label(Default, Label).
