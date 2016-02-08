@@ -87,17 +87,26 @@ simple_search_form(Options) -->
 	{ option(label(Label), Options, 'Search'),
 	  option(submit_handler(Search), Options, search)
 	},
-	html(form([ id(search_form),
-		    action(location_by_id(Search))
-		  ],
-		  [ div([ \search_box([ name(q) | Options ]),
-			  \filter(Options),
-			  \select_handler(Options),
-			  input([ type(submit),
-				  value(Label)
-				])
-			])
-		  ])).
+	html(
+	  form([
+	    action=location_by_id(Search),
+	    class=['navbar-left','navbar-form'],
+	    id=search_form,
+	    role=search
+	  ], [
+	    div(class='form-group', [
+	      \search_box([name=q|Options]),
+	      \filter(Options),
+	      \select_handler(Options),
+	      input([
+	        class='form-control',
+	        placeholder='Search',
+	        type=submit,
+	        value=Label
+	      ])
+	    ])
+	  ])
+	).
 
 filter(Options) -->
 	{ option(filter(Filter), Options), !,

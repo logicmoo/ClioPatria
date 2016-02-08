@@ -32,6 +32,7 @@
 	  [ server_address//1,		% +Component
 	    current_page_doc_link//0
 	  ]).
+:- use_module(library(html/bs)).
 :- use_module(library(http/html_write)).
 :- use_module(library(http/html_head)).
 :- use_module(library(http/http_wrapper)).
@@ -90,9 +91,10 @@ ClioPatria skin.
 		   requires([ css('plain.css')
 			    ])
 		 ]).
-:- html_resource(cliopatria,
+:- html_resource(default,
 		 [ virtual(true),
-		   requires([ css('cliopatria.css'),
+		   requires([ css('bootstrap-theme'),
+			      js(bootstrap),
 			      js('cliopatria.js')
 			    ])
 		 ]).
@@ -112,40 +114,63 @@ user:body(cliopatria(_), Body) -->
 user:body(cliopatria(plain), Body) -->
 	html_requires(plain),
 	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_logo_and_menu),
-		    \simple_search_form([value(p(q))]),
+		  [ div([id('cp-menu'), class(menu)], \cp_navbar),
 		    br(clear(all)),
 		    div([id('cp-content'), class(content)], Body),
 		    br(clear(all)),
 		    div([id('cp-footer'), class(footer)], \address)
 		  ])).
 user:body(cliopatria(_), Body) -->
-	html_requires(cliopatria),
+	html_requires(default),
 	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_logo_and_menu),
-		    \simple_search_form([value(p(q))]),
+		  [ div([id('cp-menu'), class(menu)], \cp_navbar),
 		    br(clear(all)),
 		    div([id('cp-content'), class(content)], Body),
 		    br(clear(all)),
 		    div([id('cp-footer'), class(footer)], \address)
 		  ])).
 
-cp_logo_and_menu -->
-	cp_logo,
-	cp_menu.
+cp_navbar -->
+	html(
+	  nav(class=[navbar,'navbar-default'],
+	    div(class='container-fluid', [
+	      \cp_logo,
+	      div(class=[collapse,'navbar-collapse'], [\cp_menu,\cp_search])
+	    ])
+	  )
+	).
 
 cp_logo -->
 	cliopatria:logo, !.
 cp_logo -->
+	html(
+	  div(class='navbar-header', [
+	    button([
+	      'aria-expanded'=false,
+	      class=['navbar-toggle',collapsed],
+	      'data-toggle'=collapse,
+	      type=button
+	    ], [
+	      span(class='sr-only', 'Toggle navigation'),
+	      span(class='icon-bar', []),
+	      span(class='icon-bar', []),
+	      span(class='icon-bar', [])
+	    ]),
+	    \cp_logo_image
+	  ])
+	).
+
+cp_logo_image -->
 	{ File = 'cliopatria-logo.png',
-          absolute_file_name(icons(File), _Logo,
-			     [access(read), file_errors(fail)]),
+	  absolute_file_name(icons(File), _, [access(read),file_errors(fail)]),
 	  http_absolute_location(icons(File), Src, []),
 	  http_link_to_id(home, [], Home)
 	},
-	html(a([class(logo), href(Home), style('float:left')
-	       ],
-	       img([src(Src)]))).
+	html(a([class=[logo,'navbar-brand'],href=Home], img([src(Src)]))).
+
+cp_search -->
+	simple_search_form([value(p(q))]).
+
 
 %%	address//
 %

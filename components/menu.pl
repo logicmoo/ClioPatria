@@ -68,9 +68,7 @@ cp_menu -->
 	  group_pairs_by_key(Pairs, ByKey),
 	  sort_menu_popups(ByKey, Menu)
 	},
-	html_requires(css('menu.css')),
-	html(ul(id(nav),
-		\menu(Menu))).
+	html(ul([class=[nav,'navbar-nav'],id=nav], \menu(Menu))).
 
 menu([]) --> !.
 menu([_-[Item]|T]) --> !,
@@ -78,9 +76,22 @@ menu([_-[Item]|T]) --> !,
 	menu(T).
 menu([Key-Items|T]) -->
 	{ menu_label(Key, Key, Label) },
-	html(li([ Label,
-		  ul(\menu_items(Items))
-		])),
+	html(
+	  li(class=dropdown, [
+	    a([
+	      'aria-expanded'=false,
+	      'aria-haspopup'=true,
+	      class='dropdown-toggle',
+	      'data-toggle'=dropdown,
+	      href='#',
+	      role=button
+	    ], [
+	      Label,
+	      span(class=caret, [])
+	    ]),
+	    ul(class='dropdown-menu',\menu_items(Items))
+	  ])
+	),
 	menu(T).
 
 menu_items([]) --> [].
