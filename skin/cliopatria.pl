@@ -114,22 +114,19 @@ user:body(cliopatria(_), Body) -->
 	cliopatria:page_body(Body), !.
 user:body(cliopatria(plain), Body) -->
 	html_requires(plain),
-	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_navbar),
-		    br(clear(all)),
-		    div([id('cp-content'), class(content)], Body),
-		    br(clear(all)),
-		    div([id('cp-footer'), class(footer)], \address)
-		  ])).
+	cp_body(Body).
 user:body(cliopatria(_), Body) -->
 	html_requires(default),
-	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_navbar),
-		    br(clear(all)),
-		    div([id('cp-content'), class(content)], Body),
-		    br(clear(all)),
-		    div([id('cp-footer'), class(footer)], \address)
-		  ])).
+	cp_body(Body).
+
+cp_body(Body) -->
+	html(
+	  body(class([cliopatria,'yui-skin-sam']), [
+	    \cp_navbar,
+	    div([class=content,id='cp-content'], Body),
+	    \cp_footer
+	  ])
+	).
 
 user:head(cliopatria(_), Head) -->
 	html(
@@ -185,6 +182,9 @@ cp_logo_image -->
 
 cp_search -->
 	simple_search_form([value(p(q))]).
+
+cp_footer -->
+	html(div([class=footer,id='cp-footer'], \address)).
 
 
 %%	address//
