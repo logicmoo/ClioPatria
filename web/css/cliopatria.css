@@ -27,22 +27,6 @@
 /* General ClioPatria page layout
 */
 
-.content
-{ margin-top: 10px;
-}
-
-a.logo
-{ margin-right: 5px;
-}
-
-a.logo img
-{ height: 24px;
-}
-
-a.logo img:hover
-{ outline: 1px solid blue;
-}
-
 address.footer {
   margin-top: 1ex;
   border-width: 1px 0 0 0;
