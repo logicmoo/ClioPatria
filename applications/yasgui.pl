@@ -48,8 +48,7 @@
 
 yasgui_editor(_Request) :-
 	has_yasgui, !,
-	reply_html_page(
-	    cliopatria(plain),
+	reply_html_page(cliopatria(default),
 	    title('YASGUI SPARQL Editor'),
 	    \yasgui_page).
 yasgui_editor(_Request) :-

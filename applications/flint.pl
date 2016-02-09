@@ -76,8 +76,7 @@ sparql_editor(_Request) :-
 			title('No Flint installed'),
 			\no_flint).
 sparql_editor(_Request) :-
-	reply_html_page(
-	    cliopatria(plain),
+	reply_html_page(cliopatria(default),
 	    title('Flint SPARQL Editor'),
 	    \flint_page).
 

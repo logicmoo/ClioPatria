@@ -29,13 +29,10 @@
 */
 
 :- module(cp_help, []).
-:- use_module(library(doc_http)).       	% Load pldoc
-:- use_module(library(pldoc/doc_index)).	% PlDoc Search menu
 :- use_module(library(http/http_hook)).		% Get hook signatures
 :- use_module(library(http/http_dispatch)).	% Get hook signatures
 :- use_module(library(http/html_write)).
 :- use_module(library(http/html_head)).
-:- include(library(pldoc/hooks)).
 
 :- use_module(cliopatria(parms)).	% Get paths
 :- use_module(skin(cliopatria)).	% Skinning primitives
@@ -101,36 +98,3 @@ cliopatria:menu_item(100=help/wiki_help, 'Documentation').
 cliopatria:menu_item(150=help/tutorial,  'Tutorial').
 cliopatria:menu_item(200=help/cp_help,	 'Roadmap').
 cliopatria:menu_item(300=help/http_help, 'HTTP Services').
-
-%%	user:body(+Style, :Body)// is det.
-%
-%	The multi-file implementation defines the overall layout of HTML
-%	pages with the Style pldoc(_).
-
-:- multifile
-	user:body//2.
-
-user:body(pldoc(wiki), Content) -->
-	{ absolute_file_name(cliopatria(.), Dir,
-			     [ file_type(directory),
-			       access(read)
-			     ])
-	},
-	html_requires(cliopatria),
-	html(body(class('yui-skin-sam cliopatria'),
-		  [ div(class(menu), \cp_menu),
-		    br(clear(all)),
-		    div(class(content),
-			[ \doc_links(Dir, [])
-			| Content
-			]),
-		    \server_address('ClioPatria')
-		  ])).
-user:body(pldoc(_), Content) -->
-	html_requires(cliopatria),
-	html(body(class('yui-skin-sam cliopatria'),
-		  [ div(class(menu), \cp_menu),
-		    br(clear(all)),
-		    div(class(content), Content),
-		    \server_address('ClioPatria')
-		  ])).

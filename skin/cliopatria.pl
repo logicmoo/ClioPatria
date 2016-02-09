@@ -42,6 +42,9 @@
 :- use_module(components(menu)).
 :- use_module(components(simple_search)).
 :- use_module(applications(help/version)).
+:- use_module(library(doc_http)).       	% Load pldoc
+:- use_module(library(pldoc/doc_index)).	% PlDoc Search menu
+:- include(library(pldoc/hooks)).
 
 /** <module> ClioPatria skin
 
@@ -86,11 +89,6 @@ ClioPatria skin.
 :- html_resource(js('cliopatria.js'),
 		 [ requires([jquery])
 		 ]).
-:- html_resource(plain,
-		 [ virtual(true),
-		   requires([ css('plain.css')
-			    ])
-		 ]).
 :- html_resource(default,
 		 [ virtual(true),
 		   requires([ css('bootstrap-theme'),
@@ -109,27 +107,36 @@ ClioPatria skin.
 	user:body//2,
 	user:head//2.
 
-user:body(cliopatria(Style), Body) -->
-	cliopatria:page_body(cliopatria(Style), Body), !.
-user:body(cliopatria(_), Body) -->
-	cliopatria:page_body(Body), !.
-user:body(cliopatria(plain), Body) -->
-	html_requires(plain),
-	cp_body(Body).
-user:body(cliopatria(_), Body) -->
+% Overrule default style with cliopatria:page_body//1.
+user:body(cliopatria(_), Content) -->
+	cliopatria:page_body(Content), !.
+% Overrule default style with cliopatria:page_body//2.
+user:body(cliopatria(Style), Content) -->
+	cliopatria:page_body(cliopatria(Style), Content), !.
+% Default style.
+user:body(cliopatria(_), Content) -->
 	html_requires(default),
-	cp_body(Body).
+	cp_body(Content).
+% Wiki style.
+user:body(pldoc(wiki), Content) -->
+	{absolute_file_name(cliopatria(.), Dir, [access(read),file_type(directory)])},
+	html_requires(default),
+	cp_body([\doc_links(Dir, [])|Content]).
+% Documentation style.
+user:body(pldoc(_), Content) -->
+	html_requires(default),
+  cp_body(Content).
 
-cp_body(Body) -->
+cp_body(Content) -->
 	html(
 	  body(class([cliopatria,'yui-skin-sam']), [
 	    \cp_navbar,
 	    div(class='container-fluid',
 	      div(class=row,
-	        div(class='col-xs-10', Body)
+	        div(class='col-xs-10', Content)
 	      )
-	    ),
-	    \cp_footer
+	    )
+	    %\cp_footer
 	  ])
 	).
 
@@ -183,7 +190,7 @@ cp_logo_image -->
 	  http_absolute_location(icons(File), Src, []),
 	  http_link_to_id(home, [], Home)
 	},
-	html(a([class=[logo,'navbar-brand'],href=Home], img([src(Src)]))).
+	html(a([class=[logo,'navbar-brand'],href=Home], img([height='25px',src=Src]))).
 
 cp_search -->
 	simple_search_form([value(p(q))]).
