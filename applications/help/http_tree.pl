@@ -136,7 +136,7 @@ expand_http_node(Request) :-
 			[ node(Parent, [ description('HTTP location to refine')])
 			]),
 	node_children(Parent, Children),
-	reply_json(Children, []).
+	reply_json_dict(Children).
 
 node_children(Parent, Children) :-
 	ensure_ends_slash(Parent, Parent1),
@@ -164,16 +164,14 @@ first_component(Parent, Path, ParentExt) :-
 first_component(_, Path, Path).
 
 
-decorate(Prefix-[Only],
-	 json([label(Label), isLeaf(@(true)), path(Only)])) :-
+decorate(Prefix-[Only], _{label: Label, isLeaf: true, path: Only}) :-
 	atom_concat(Prefix, Rest, Only),
 	(   Rest == ''
 	;   Rest == /
 	), !,
 	file_base_name(Prefix, Label0),
 	leaf_label(Only, Label0, Label).
-decorate(Prefix-_,
-	 json([label(Label), isLeaf(@(false)), path(Prefix)])) :-
+decorate(Prefix-_, _{label: Label, isLeaf: false, path: Prefix}) :-
 	file_base_name(Prefix, Label).
 
 leaf_label(Only, Label0, Label) :-
@@ -182,6 +180,3 @@ leaf_label(Only, Label0, Label) :-
 	->  atom_concat(Label0, '...', Label)
 	;   Label = Label0
 	).
-
-
-
