@@ -161,7 +161,7 @@ graph_triples(Graph, Count) :-			% RDF-DB < 3.0
 
 graph_table(Graphs, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500),
+	  option(bottom_max(BottomMax), Options, 500),
 	  http_link_to_id(multigraph_action, [], Action),
 	  graph_actions(Options, ActionOptions)
 	},
@@ -616,7 +616,7 @@ list_classes(Request) :-
 
 class_table(Pairs, Graph, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500)
+	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
 	cp_table([
@@ -815,7 +815,7 @@ sorted_by(Sort) -->
 
 instance_table(Pairs, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500)
+	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
 	cp_table([
@@ -1075,7 +1075,7 @@ showing_skosmap(_) --> [].
 
 resource_frequency_table(Pairs, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500),
+	  option(bottom_max(BottomMax), Options, 500),
 	  option(predicate(Pred), Options, _),
 	  option(side(Side), Options)
 	},
@@ -1953,7 +1953,7 @@ on_predicate(P) -->
 
 otriple_table(SPList, Object, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500)
+	  option(bottom_max(BottomMax), Options, 500)
 	},
 	cp_table([
 	  \sp_header(Object),
@@ -2153,7 +2153,7 @@ ltriples([H|T], F) -->
 
 rdf_table(Triples, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500)
+	  option(bottom_max(BottomMax), Options, 500)
 	},
 	cp_table([
 	  cp_table_header(['Subject','Predicate','Object']),
