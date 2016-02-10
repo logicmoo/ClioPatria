@@ -1855,7 +1855,7 @@ with_range(Range) -->
 
 triple_table(Triples, Pred, Options) -->
 	{ option(top_max(TopMax), Options, 500),
-	  option(top_max(BottomMax), Options, 500)
+	  option(bottom_max(BottomMax), Options, 500)
 	},
 	cp_table([
 	  \spo_header(Pred),
