@@ -1793,6 +1793,9 @@ list_triples(Request) :-
 					 description('Restrict to objects of this class')
 				       ])
 			]),
+	list_triples(P, Graph, Dom, Range).
+
+list_triples(P, Graph, Dom, Range) :-
 	(   atom(Dom)
 	->  findall(rdf(S,P,O), rdf_in_domain(S,P,O,Dom,Graph), Triples0)
 	;   atom(Range)
