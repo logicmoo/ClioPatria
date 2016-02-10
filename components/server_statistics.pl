@@ -184,11 +184,11 @@ server_stats(Port-Workers) -->
 	  format_time(string(ST), '%+', StartTime),
 	  cputime(CPU)
 	},
-	html([ \server_stat('Port:', Port, odd),
-	       \server_stat('Started:', ST, even),
-	       \server_stat('Total CPU usage:', [\n('~2f',CPU), ' seconds'], odd),
+	html([ \server_stat('Port:', Port),
+	       \server_stat('Started:', ST),
+	       \server_stat('Total CPU usage:', [\n('~2f',CPU), ' seconds']),
 	       \request_statistics,
-	       \server_stat('# worker threads:', NWorkers, odd),
+	       \server_stat('# worker threads:', NWorkers),
 	       tr(th(colspan(6), 'Statistics by worker')),
 	       tr([ th('Thread'),
 		    th('CPU'),
@@ -197,12 +197,11 @@ server_stats(Port-Workers) -->
 		    th('Global'),
 		    th('Trail')
 		  ]),
-	       \http_workers(Workers, odd)
+	       \http_workers(Workers)
 	     ]).
 
-server_stat(Name, Value, OE) -->
-	html(tr(class(OE),
-		[ th([class(p_name), colspan(3)], Name),
+server_stat(Name, Value) -->
+	html(tr([ th([class(p_name), colspan(3)], Name),
 		  td([class(value),  colspan(3)], Value)
 		])).
 
@@ -213,8 +212,8 @@ request_statistics -->
 	{ cgi_statistics(requests(Count)),
 	  cgi_statistics(bytes_sent(Sent))
 	},
-	server_stat('Requests processed:', \n(human, Count), odd),
-	server_stat('Bytes sent:', \n(human, Sent), even).
+	server_stat('Requests processed:', \n(human, Count)),
+	server_stat('Bytes sent:', \n(human, Sent)).
 :- else.
 request_statistics --> [].
 :- endif.
@@ -222,12 +221,11 @@ request_statistics --> [].
 
 http_workers([], _) -->
 	[].
-http_workers([H|T], OE) -->
-	{ odd_even(OE, OE2) },
-	http_worker(H, OE),
-	http_workers(T, OE2).
+http_workers([H|T]) -->
+	http_worker(H),
+	http_workers(T).
 
-http_worker(H, OE) -->
+http_worker(H) -->
 	{ thread_statistics(H, locallimit, LL),
 	  thread_statistics(H, globallimit, GL),
 	  thread_statistics(H, traillimit, TL),
@@ -236,24 +234,20 @@ http_worker(H, OE) -->
 	  thread_statistics(H, trailused, TU),
 	  thread_statistics(H, cputime, CPU)
 	},
-	html([ tr(class(OE),
-		  [ td(rowspan(2), H),
+	html([ tr([ td(rowspan(2), H),
 		    \nc('~3f', CPU, [rowspan(2)]),
 		    th('In use'),
 		    \nc(human, LU),
 		    \nc(human, GU),
 		    \nc(human, TU)
 		  ]),
-	       tr(class(OE),
-		  [ th('Limit'),
+	       tr([ th('Limit'),
 		    \nc(human, LL),
 		    \nc(human, GL),
 		    \nc(human, TL)
 		  ])
 	     ]).
 
-odd_even(even, odd).
-odd_even(odd, even).
 
 
 		 /*******************************

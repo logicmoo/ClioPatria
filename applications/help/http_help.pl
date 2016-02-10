@@ -369,32 +369,25 @@ parameter_table([]) --> !,
 parameter_table(Params) -->
 	html([ table(class(http_parameters),
 		     [ tr([th('Name'), th('Type'), th('Default'), th('Description')])
-		     | \parameters(Params, 1)
+		     | \parameters(Params)
 		     ])
 	     ]).
 
-parameters([], _) --> [].
-parameters([group(Members, Options)|T], _N) --> !,
+parameters([]) --> [].
+parameters([group(Members, Options)|T]) --> !,
 	html(tr(class(group),
 		[ th(colspan(4), \group_title(Options))
 		])),
-	parameters(Members, 0),
+	parameters(Members),
 					% typically, this should be
 					% a group again
-	parameters(T, 0).
-parameters([H|T], N) -->
-	{ N1 is N + 1,
-	  (   N mod 2 =:= 0
-	  ->  Class = even
-	  ;   Class = odd
-	  )
-	},
-	parameter(H, Class),
-	parameters(T, N1).
+	parameters(T).
+parameters([H|T]) -->
+	parameter(H),
+	parameters(T).
 
-parameter(param(Name, Options), Class) -->
-	html(tr(class(Class),
-		[ td(class(name), Name),
+parameter(param(Name, Options)) -->
+	html(tr([ td(class(name), Name),
 		  td(\param_type(Options)),
 		  td(\param_default(Options)),
 		  td(\param_description(Options))

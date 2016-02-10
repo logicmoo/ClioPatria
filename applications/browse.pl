@@ -1497,20 +1497,12 @@ lview_row(Options, S, Graphs, P-OList) -->
 
 object_list([], _, _, _, _, _) --> [].
 object_list([H|T], S, P, Graphs, Options, Row) -->
-	{ NextRow is Row + 1,
-	  obj_class(Row, Class)
-	},
-	html(div(class(Class),
+	{NextRow is Row + 1},
+	html(div(
 		 [ \rdf_link(H, Options),
 		   \graph_marks(S, P, H, Graphs)
 		 ])),
 	object_list(T, S, P, Graphs, Options, NextRow).
-
-obj_class(N, Class) :-
-	(   N mod 2 =:= 0
-	->  Class = even
-	;   Class = odd
-	).
 
 graph_marks(_,_,_,[_]) --> !.
 graph_marks(S,P,O,Graphs) -->
@@ -2227,15 +2219,16 @@ pcell(H) -->
 %%	table_rows(:Goal, +DataList, +MaxTop, +MaxBottom)// is det.
 %
 %	Emit a number of table rows (=tr=).   The content of each row is
-%	created by calling call(Goal, Data)  as   a  DCG.  The rows have
-%	alternating classes =even= and =odd=.  The first row is =odd=.
+%	created by calling call(Goal, Data)  as   a  DCG.
 %
 %	The variation table_rows//4  limits  the   size  of  the  table,
 %	placing a cell with  class  =skip=,   indicating  the  number of
 %	skipped rows.
 %
-%	Note that we can also achieve  alternate colouring using the CSS
-%	pseudo classes =|tr:nth-child(odd)|= and =|tr:nth-child(even)|=.
+%	@legacy It used to be the case that rows were given classes `even'
+%		add `odd'.  Note that we can achieve alternate colouring
+%		of table rows with the CSS pseudo classes
+%		=|tr:nth-child(odd)|= and =|tr:nth-child(even)|=.
 
 table_rows(Goal, Rows) -->
 	table_rows(Rows, Goal, 1, -1).
@@ -2261,13 +2254,9 @@ table_rows(_, _, _, 0) --> !, [].
 table_rows([], _, _, _) --> [].
 table_rows([H|T], Goal, N, Left) -->
 	{ N2 is N + 1,
-	  (   N mod 2 =:= 0
-	  ->  Class = even
-	  ;   Class = odd
-	  ),
 	  Left2 is Left - 1
 	},
-	html(tr(class(Class), \call(Goal, H))),
+	html(tr(\call(Goal, H))),
 	table_rows(T, Goal, N2, Left2).
 
 delete_list_prefix(0, List, List) :- !.
