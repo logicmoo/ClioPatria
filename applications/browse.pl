@@ -2323,7 +2323,7 @@ ns_table(turtle, Pairs) -->
 
 prefix_row(Prefix-URI) -->
 	html([ td(Prefix),
-	       td(URI)
+	       td(a(href=URI,URI))
 	     ]).
 
 turtle_prefixes(Pairs) -->
