@@ -2235,31 +2235,31 @@ pcell(H) -->
 %		=|tr:nth-child(odd)|= and =|tr:nth-child(even)|=.
 
 table_rows(Goal, Rows) -->
-	table_rows(Rows, Goal, -1).
+	table_rows(Goal, Rows, -1).
 
 table_rows_top_bottom(Goal, Rows, _, inf) --> !,
-	table_rows(Rows, Goal, -1).
+	table_rows(Goal, Rows, -1).
 table_rows_top_bottom(Goal, Rows, MaxTop, MaxBottom) -->
 	{ length(Rows, Count) },
 	(   { MaxTop+MaxBottom >= Count }
-	->  table_rows(Rows, Goal, -1)
+	->  table_rows(Goal, Rows, -1)
 	;   { Skip is Count-MaxBottom,
 	      delete_list_prefix(Skip, Rows, BottomRows),
 	      Skipped is Count-(MaxTop+MaxBottom)
 	    },
-	    table_rows(Rows, Goal, MaxTop),
+	    table_rows(Goal, Rows, MaxTop),
 	    html(tr(class(skip),
 		    [ th(colspan(10), 'Skipped ~D rows'-[Skipped])
 		    ])),
-	    table_rows(BottomRows, Goal, -1)
+	    table_rows(Goal, BottomRows, -1)
 	).
 
 table_rows(_, _, 0) --> !, [].
-table_rows([], _, _) --> [].
-table_rows([H|T], Goal, Left) -->
+table_rows(_, [], _) --> [].
+table_rows(Goal, [H|T], Left) -->
 	{Left2 is Left - 1},
 	html(tr(\call(Goal, H))),
-	table_rows(T, Goal, Left2).
+	table_rows(Goal, T, Left2).
 
 delete_list_prefix(0, List, List) :- !.
 delete_list_prefix(_, [], []) :- !.
