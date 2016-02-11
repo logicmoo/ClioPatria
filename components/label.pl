@@ -29,7 +29,8 @@
 */
 
 :- module(cp_label,
-	  [ turtle_label//1,		% +Literal
+	  [ graph_link//1,		% +Graph
+	    turtle_label//1,		% +Literal
 	    rdf_link//1,		% +RDFTerm
 	    rdf_link//2,		% +RDFTerm, +Options
 	    resource_link/2		% +URI, -URL
@@ -52,6 +53,12 @@ This module provides HTML components to display labels for resources.
 
 @see	library(semweb/rdf_label) returns textual labels.
 */
+
+
+graph_link(Graph) -->
+	{ http_link_to_id(list_graph, [graph=Graph], URI)
+	},
+	html(a(href(URI), \resource_label(Graph, [resource_format(nslabel)]))).
 
 
 %%	turtle_label(+RDFTerm)// is det.

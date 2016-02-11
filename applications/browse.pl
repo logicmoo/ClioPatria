@@ -193,13 +193,6 @@ graph_row(Options, Graph) -->
 	       \graph_checkbox(Graph, Options)
 	     ]).
 
-
-
-graph_link(Graph) -->
-	{ http_link_to_id(list_graph, [graph=Graph], URI)
-	},
-	html(a(href(URI), Graph)).
-
 persistency(Graph) -->
 	{ rdf_graph_property(Graph, persistent(true)) }, !,
 	snapshot(Graph),
