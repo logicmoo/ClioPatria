@@ -175,7 +175,7 @@ rdf_collection_list(R, [H|T]) :-
 %	    Determines peference for displaying resources.  Values are:
 %
 %	        * plain
-%	        Display full resource a plain text
+%	        Display full resource as plain text
 %	        * label
 %	        Try to display a resource using its label
 %	        * nslabel
