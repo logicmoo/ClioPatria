@@ -111,7 +111,8 @@ that allow back-office applications to reuse this infrastructure.
 
 
 :- meta_predicate
-	table_rows(3, +, ?),
+	table_rows(3, +, ?, ?),
+	table_rows(3, +, +, ?, ?),
 	table_rows_top_bottom(3, +, +, +, ?, ?),
 	html_property_table(?, 0, ?, ?).
 
