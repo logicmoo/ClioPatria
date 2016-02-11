@@ -1317,7 +1317,7 @@ define_prefix(_) -->			% Not a suitable URI.  Warn?
 %	Show the URI. If the URI is a blank node, show its context using
 %	Turtle notation.
 
-location(URI, _Graph) -->
+location(URI, _) -->
 	{ rdf_is_bnode(URI), !,
 	  findall(Path, path_to_non_bnode(URI, Path), Paths),
 	  sort_by_length(Paths, PathsByLen),
@@ -1328,8 +1328,8 @@ location(URI, _Graph) -->
 	  )
 	},
 	bnode_location(Path).
-location(URI, _) -->
-	html(URI).
+location(URI, G) -->
+	html(\rdf_link(URI, [graph(G)])).
 
 bnode_location([P-URI]) --> !,
 	html([ '[', \rdf_link(P, []), ' ',
