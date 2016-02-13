@@ -1779,18 +1779,6 @@ list_triples(Request) :-
 					 description('Restrict to objects of this class')
 				       ])
 			]),
-	list_triples(P, Graph, Dom, Range).
-
-list_triples(P, Graph, Dom, Range) :-
-	(   atom(Dom)
-	->  findall(rdf(S,P,O), rdf_in_domain(S,P,O,Dom,Graph), Triples0)
-	;   atom(Range)
-	->  findall(rdf(S,P,O), rdf_in_range(S,P,O,Range,Graph), Triples0)
-	;   findall(rdf(S,P,O), rdf(S,P,O,Graph), Triples0)
-	),
-	sort(Triples0, Triples),
-	sort_triples_by_label(Triples, Sorted),
-	length(Sorted, Count),
 	(   var(P)
 	->  Title = 'Triples in graph ~w'-[Graph]
 	;   rdf_display_label(P, PLabel),
@@ -1798,9 +1786,22 @@ list_triples(P, Graph, Dom, Range) :-
 	),
 	reply_html_page(cliopatria(default),
 			title(Title),
-			[ h1(\triple_header(Count, P, Dom, Range, Graph)),
-			  \triple_table(Sorted, P, [resource_format(nslabel)])
-			]).
+			\list_triples(P, Graph, Dom, Range)).
+
+list_triples(P, Graph, Dom, Range) -->
+	{(  atom(Dom)
+	->  findall(rdf(S,P,O), rdf_in_domain(S,P,O,Dom,Graph), Triples0)
+	;   atom(Range)
+	->  findall(rdf(S,P,O), rdf_in_range(S,P,O,Range,Graph), Triples0)
+	;   findall(rdf(S,P,O), rdf(S,P,O,Graph), Triples0)
+	),
+	sort(Triples0, Triples),
+	sort_triples_by_label(Triples, Sorted),
+	length(Sorted, Count)},
+	html([
+	  h1(\triple_header(Count, P, Dom, Range, Graph)),
+	  \triple_table(Sorted, P, [resource_format(nslabel)])
+	]).
 
 rdf_in_domain(S,P,O,Dom,Graph) :-
 	rdf(S, P, O, Graph),
