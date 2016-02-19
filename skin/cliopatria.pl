@@ -113,10 +113,12 @@ user:body(cliopatria(_), Content) -->
 % Overrule default style with cliopatria:page_body//2.
 user:body(cliopatria(Style), Content) -->
 	cliopatria:page_body(cliopatria(Style), Content), !.
+% Sparse style.
+user:body(cliopatria(sparse), Content) -->
+  cp_body(Content).
 % Default style.
 user:body(cliopatria(_), Content) -->
-	html_requires(default),
-	cp_body(Content).
+	cp_body(div(class='col-xs-10', Content)).
 % Wiki style.
 user:body(pldoc(wiki), Content) -->
 	{absolute_file_name(cliopatria(.), Dir, [access(read),file_type(directory)])},
@@ -128,17 +130,17 @@ user:body(pldoc(_), Content) -->
   cp_body(Content).
 
 cp_body(Content) -->
-	html(
+	html([
+    \html_requires(default),
 	  body(class([cliopatria,'yui-skin-sam']), [
 	    \cp_navbar,
 	    div(class='container-fluid',
 	      div(class=row,
-	        div(class='col-xs-10', Content)
+	        div(Content)
 	      )
 	    )
-	    %\cp_footer
 	  ])
-	).
+	]).
 
 user:head(cliopatria(_), Head) -->
 	html(
