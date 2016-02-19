@@ -29,6 +29,7 @@
 
 :- module(html_basics,
 	  [ cp_table//1,		% :Content
+	    cp_table//2,		% +Headers:list(atom), :Content
 	    cp_table_header//1,		% +Headers:list(atom)
 	    hidden//2,			% +Name, +Value
 	    form_input//2,		% +Label, +Input
@@ -49,6 +50,7 @@
 
 :- html_meta
 	cp_table(html, ?, ?),
+	cp_table(+, html, ?, ?),
 	form_input(html, html, ?, ?),
 	sort_th(+, +, html, ?, ?).
 
@@ -132,6 +134,9 @@ class(Value, Class) :-
 
 cp_table(Content) -->
 	html(table(class=[block,table,'table-condensed','table-striped'], Content)).
+
+cp_table(Headers, Content) -->
+	cp_table([\cp_table_header(Headers)|Content]).
 
 cp_table_header(L) -->
 	html(thead(tr(\cp_table_header_items(L)))).
