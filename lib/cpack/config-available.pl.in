@@ -1,4 +1,4 @@
-:- module(conf_@NAME@, []).
+:- module('conf_@NAME@', []).
 
 /** <module> @TITLE@
 */
