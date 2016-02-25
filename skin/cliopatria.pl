@@ -32,7 +32,7 @@
 	  [ server_address//1,		% +Component
 	    current_page_doc_link//0
 	  ]).
-:- use_module(library(bs/bs)).
+:- use_module(library(html/html_bs)).
 :- use_module(library(http/html_write)).
 :- use_module(library(http/html_head)).
 :- use_module(library(http/http_wrapper)).
