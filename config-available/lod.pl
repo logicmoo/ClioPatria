@@ -37,4 +37,3 @@ _object_.
 %			   bounded_description(cbd)
 %			 ]),
 %		 [ prefix ]).
-

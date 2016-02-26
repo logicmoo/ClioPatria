@@ -47,7 +47,7 @@
 :- multifile
 	prolog:doc_search_field//1.
 
-:- http_handler(root(autocomplete/ac_predicate), ac_predicate, []).
+:- http_handler(cliopatria(autocomplete/ac_predicate), ac_predicate, []).
 
 max_results_displayed(100).
 

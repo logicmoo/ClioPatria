@@ -71,7 +71,7 @@ terms as a graph.
 % Note that images are requested relative to this URL.  Changing this
 % also requires changing the `image server' in graphviz.pl
 
-:- http_handler(root('graphviz/send_graph'), send_graph, []).
+:- http_handler(cliopatria('graphviz/send_graph'), send_graph, []).
 
 %%	graphviz_graph(:Closure, +Options)//
 %

@@ -182,7 +182,7 @@ trusted_openid_server(URL) -->
 		 *	   OPENID SERVER	*
 		 *******************************/
 
-:- http_handler(root(user), openid_userpage, [prefix]).
+:- http_handler(cliopatria(user), openid_userpage, [prefix]).
 :- http_handler(openid(server), openid_server([]), [prefix]).
 
 http_openid:openid_hook(grant(Request, Options)) :-

@@ -97,17 +97,17 @@ user:file_search_path(yasr,		web('yasr/dist')).
 		 *	     HTTP PATHS		*
 		 *******************************/
 
-http:location(cliopatria,  root(.),	       []).
-http:location(web,	   cliopatria(web),    []).
-http:location(sesame,	   root(servlets),     []).
-http:location(sparql,	   root(sparql),       []).
-http:location(rdf_browser, cliopatria(browse), []).
-http:location(flint,       cliopatria(flint),  []).
-http:location(api,	   cliopatria(api),    []).
-http:location(json,	   api(json),	       []).
-http:location(yasgui,      cliopatria(yasgui), []).
-http:location(yasqe,	   cliopatria(yasqe),  []).
-http:location(yasr,	   cliopatria(yasr),   []).
+http:location(cliopatria,  root(.), [priority(-1)]).
+http:location(web,	   cliopatria(web),     []).
+http:location(sesame,	   root(servlets),      []).
+http:location(sparql,	   root(sparql),        []).
+http:location(rdf_browser, cliopatria(browse),  []).
+http:location(flint,       cliopatria(flint),   []).
+http:location(api,	   cliopatria(api),     []).
+http:location(json,	   api(json),	        []).
+http:location(yasgui,      cliopatria(yasgui),  []).
+http:location(yasqe,	   cliopatria(yasqe),   []).
+http:location(yasr,	   cliopatria(yasr),    []).
 
 		 /*******************************
 		 *	       TYPES		*

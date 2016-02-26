@@ -270,7 +270,7 @@ someone_logged_on :-
 		 *	      OpenID		*
 		 *******************************/
 
-:- http_handler(root(my_openid_page), my_openid_page, []).
+:- http_handler(cliopatria(my_openid_page), my_openid_page, []).
 
 my_openid_page(Request) :-
 	open_id_user(User),

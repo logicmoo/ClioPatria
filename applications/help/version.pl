@@ -42,7 +42,7 @@
 /** <module> Provide detailed version information
 */
 
-:- http_handler(root(help/versions), version_info, []).
+:- http_handler(cliopatria(help/versions), version_info, []).
 
 %%	version_info(+Request)
 %

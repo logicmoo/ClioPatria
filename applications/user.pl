@@ -84,14 +84,10 @@ in:
     ==
 */
 
-:- http_handler(root('.'),			     root,
-		[ priority(-100) ]).
-:- http_handler(cliopatria(home),		     home,
-		[ priority(-100) ]).
-:- http_handler(cliopatria(admin),		     home,
-		[ id(admin) ]).
-:- http_handler(cliopatria('user/query'),	     query_form,
-		[id(sparql_query_form)]).
+:- http_handler(cliopatria('.'),		     root,	 []).
+:- http_handler(cliopatria(home),		     home,	 []).
+:- http_handler(cliopatria(admin),		     home,	 [id(admin)]).
+:- http_handler(cliopatria('user/query'),	     query_form, [id(sparql_query_form)]).
 :- http_handler(cliopatria('user/statistics'),	     statistics,	      []).
 :- http_handler(cliopatria('user/loadFile'),	     load_file_form,	      []).
 :- http_handler(cliopatria('user/loadURL'),	     load_url_form,	      []).

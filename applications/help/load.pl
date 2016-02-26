@@ -52,9 +52,9 @@ programming system to provide documentation of the source-code.
 %
 %       Rebase PlDoc to <prefix>/help/source/
 
-http:location(pldoc, root('help/source'), [priority(10)]).
+http:location(pldoc, cliopatria('help/source'), [priority(10)]).
 
-:- http_handler(root(help/source), cp_help, []).
+:- http_handler(cliopatria(help/source), cp_help, []).
 :- http_handler(cliopatria('help/'),
 		serve_page(help), [prefix, id(wiki_help)]).
 :- http_handler(cliopatria('tutorial/'),
