@@ -1216,7 +1216,7 @@ result_table(CPU, Subjects, Triples) -->
 	  div(class=row,
 	    div(class='col-xs-6', [
 	      h4('Operation completed'),
-	      \cp_table([
+	      \bs_table([
 	        tr([td(class(empty), ''), th('+/-'), th('now')]),
 	        tr([th(class(p_name), 'CPU time'), \nc('~3f', CPU), td('')]),
 	        tr([th(class(p_name), \subj_label), \nc('~D', Subjects), \nc('~D', SubjectsNow)]),

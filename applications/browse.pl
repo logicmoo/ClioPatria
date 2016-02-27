@@ -67,6 +67,7 @@
 
 :- use_module(user(user_db)).
 
+:- use_module(library(html/html_bs)).
 
 /** <module> ClioPatria RDF data browser
 
@@ -169,10 +170,10 @@ graph_table(Graphs, Options) -->
 	html_requires(css('rdf.css')),
 	html(
 	  form([action(Action),class('graph-table')], [
-	    \cp_table([
-	      \cp_table_header(['RDF Graph','Triples','Persistency']),
+	    \bs_table(
+	      ['RDF Graph','Triples','Persistency'],
 	      \table_rows_top_bottom(graph_row(ActionOptions), Graphs, TopMax, BottomMax)
-	    ]),
+	    ),
 	    \multigraph_actions(ActionOptions)
 	  ])
 	),
@@ -454,11 +455,10 @@ graph_persistency(Graph) -->
 	}, !,
 	html([
 	  h1('Persistency information'),
-	  \cp_table([
-	    \cp_table_header(['Role','File','Size','Modified']),
-	    \graph_snapshot(Graph),
-	    \graph_journal(Graph)
-	  ])
+	  \bs_table(
+	    \bs_table_header(['Role','File','Size','Modified']),
+	    [\graph_snapshot(Graph),\graph_journal(Graph)]
+	  )
 	]).
 graph_persistency(Graph) -->
 	{ rdf_graph_property(Graph, persistent(true))
@@ -613,10 +613,10 @@ class_table(Pairs, Graph, Options) -->
 	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	cp_table([
-	  \cp_table_header(['Class','#Instances']),
+	bs_table(
+	  \bs_table_header(['Class','#Instances']),
 	  \table_rows_top_bottom(class_row(Graph), Pairs, TopMax, BottomMax)
-	]).
+	).
 
 class_row(Graph, Class) -->
 	{ atom(Class), !,
@@ -812,10 +812,10 @@ instance_table(Pairs, Options) -->
 	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	cp_table([
-	  \cp_table_header(['Instance','#Properties']),
+	bs_table(
+	  \bs_table_header(['Instance','#Properties']),
 	  \table_rows_top_bottom(instance_row(Options), Pairs, TopMax, BottomMax)
-	]).
+	).
 
 instance_row(Options, R-C) -->
 	html([ td(\rdf_link(R, Options)),
@@ -848,8 +848,8 @@ predicate_table(Preds, Graph, Options) -->
 	  option(bottom_max(BottomMax), Options, 500)
 	},
 	html_requires(css('rdf.css')),
-	cp_table([
-	  \cp_table_header([
+	bs_table(
+	  \bs_table_header([
 	    'Predicate',
 	    '#Triples',
 	    '#Distinct subjects',
@@ -858,7 +858,7 @@ predicate_table(Preds, Graph, Options) -->
 	    'Range(s)'
 	  ]),
 	  \table_rows_top_bottom(predicate_row(Graph), Preds, TopMax, BottomMax)
-	]).
+	).
 
 
 %%	predicate_row(?Graph, +Pred) is det.
@@ -1074,10 +1074,10 @@ resource_frequency_table(Pairs, Options) -->
 	  option(side(Side), Options)
 	},
 	html_requires(css('rdf.css')),
-	cp_table([
+	bs_table(
 	  \resource_table_header(Options),
 	  \table_rows_top_bottom(resource_row(Pred, Side, Options), Pairs, TopMax, BottomMax)
-	]).
+	).
 
 resource_table_header(Options) -->
 	{ option(label(Label), Options, 'Resource'),
@@ -1441,10 +1441,10 @@ local_view(URI, Graph, Options) -->
 	(   { Pairs \== []
 	    }
 	->  html_requires(css('rdf.css')),
-	    cp_table([
+	    bs_table(
 	      \lview_header(Options),
 	      \table_rows_top_bottom(lview_row(Options, URI, Graphs), Pairs, TopMax, BottomMax)
-	    ]),
+	    ),
 	    graph_footnotes(Graphs, Options)
 	;   { lod_uri_graph(URI, LODGraph),
 	      rdf_graph(LODGraph)
@@ -1847,16 +1847,16 @@ triple_table(Triples, Pred, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(bottom_max(BottomMax), Options, 500)
 	},
-	cp_table([
+	bs_table(
 	  \spo_header(Pred),
 	  \table_rows_top_bottom(spo_row(Options, Pred), Triples, TopMax, BottomMax)
-	]).
+	).
 
 spo_header(P) -->
 	{ nonvar(P) },
-	cp_table_header(['Subject','Object']).
+	bs_table_header(['Subject','Object']).
 spo_header(_) -->
-	cp_table_header(['Subject','Predicate','Object']).
+	bs_table_header(['Subject','Predicate','Object']).
 
 spo_row(Options, Pred, rdf(S,_,O)) -->
 	{ nonvar(Pred) }, !,
@@ -1953,13 +1953,13 @@ otriple_table(SPList, Object, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(bottom_max(BottomMax), Options, 500)
 	},
-	cp_table([
+	bs_table(
 	  \sp_header(Object),
 	  \table_rows_top_bottom(sp_row(Options,Object), SPList, TopMax, BottomMax)
-	]).
+	).
 
 sp_header(_) -->
-	cp_table_header(['Subject','Predicate']).
+	bs_table_header(['Subject','Predicate']).
 
 sp_row(Options, _O, S-P) -->
 	html([ td(class(subject),   \rdf_link(S, Options)),
@@ -2153,10 +2153,10 @@ rdf_table(Triples, Options) -->
 	{ option(top_max(TopMax), Options, 500),
 	  option(bottom_max(BottomMax), Options, 500)
 	},
-	cp_table([
-	  cp_table_header(['Subject','Predicate','Object']),
+	bs_table(
+	  bs_table_header(['Subject','Predicate','Object']),
 	  \table_rows_top_bottom(triple, Triples, TopMax, BottomMax)
-	]).
+	).
 
 triple(rdf(S,P,O)) -->
 	html([ td(class(subject),   \rdf_link(S)),
@@ -2179,7 +2179,7 @@ triple(rdf(S,P,O)) -->
 
 html_property_table(Template, Goal) -->
 	{ findall(Template, Goal, Rows) },
-	cp_table(\table_rows(prow, Rows)).
+	bs_table(\table_rows(prow, Rows)).
 
 prow(Row) -->
 	{ Row =.. [_,H|Cells],
@@ -2311,10 +2311,10 @@ alt_formats([H|T], Request) -->
 	).
 
 ns_table(html, Pairs) -->
-	cp_table([
-	  \cp_table_header(['Prefix','URI']),
+	bs_table(
+	  \bs_table_header(['Prefix','URI']),
 	  \table_rows(prefix_row, Pairs)
-	]).
+	).
 ns_table(turtle, Pairs) -->
 	html(pre(class(code),
 		 \turtle_prefixes(Pairs))).
