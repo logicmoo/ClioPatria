@@ -58,6 +58,8 @@
 :- use_module(components(query)).
 :- use_module(components(messages)).
 
+:- use_module(library(html/html_bs)).
+
 :- meta_predicate(api_action2(+,0,+,+)).
 
 :- http_handler(sesame('login'),	      http_login,	    []).
