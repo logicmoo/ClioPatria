@@ -171,7 +171,7 @@ graph_table(Graphs, Options) -->
 	html(
 	  form([action(Action),class('graph-table')], [
 	    \bs_table(
-	      ['RDF Graph','Triples','Persistency'],
+	      \bs_table_header(['RDF Graph','Triples','Persistency']),
 	      \table_rows_top_bottom(graph_row(ActionOptions), Graphs, TopMax, BottomMax)
 	    ),
 	    \multigraph_actions(ActionOptions)
