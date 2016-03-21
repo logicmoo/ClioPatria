@@ -112,6 +112,7 @@ that allow back-office applications to reuse this infrastructure.
 
 :- meta_predicate
 	table_rows(3, +, ?, ?),
+	table_rows(3, +, +, +, ?, ?),
 	table_rows_top_bottom(3, +, +, +, ?, ?),
 	html_property_table(?, 0, ?, ?).
 
@@ -2283,28 +2284,28 @@ pcell(H) -->
 %	pseudo classes =|tr:nth-child(odd)|= and =|tr:nth-child(even)|=.
 
 table_rows(Goal, Rows) -->
-	table_rows(Rows, Goal, 1, -1).
+	table_rows(Goal, Rows, 1, -1).
 
 table_rows_top_bottom(Goal, Rows, inf, inf) --> !,
-	table_rows(Rows, Goal, 1, -1).
+	table_rows(Goal, Rows, 1, -1).
 table_rows_top_bottom(Goal, Rows, MaxTop, MaxBottom) -->
 	{ length(Rows, Count) },
 	(   { MaxTop+MaxBottom >= Count }
-	->  table_rows(Rows, Goal, 1, -1)
+	->  table_rows(Goal, Rows, 1, -1)
 	;   { Skip is Count-MaxBottom,
 	      delete_list_prefix(Skip, Rows, BottomRows),
 	      Skipped is Count-(MaxTop+MaxBottom)
 	    },
-	    table_rows(Rows, Goal, 1, MaxTop),
+	    table_rows(Goal, Rows, 1, MaxTop),
 	    html(tr(class(skip),
 		    [ th(colspan(10), 'Skipped ~D rows'-[Skipped])
 		    ])),
-	    table_rows(BottomRows, Goal, 1, -1)
+	    table_rows(Goal, BottomRows, 1, -1)
 	).
 
 table_rows(_, _, _, 0) --> !, [].
-table_rows([], _, _, _) --> [].
-table_rows([H|T], Goal, N, Left) -->
+table_rows(_, [], _, _) --> [].
+table_rows(Goal, [H|T], N, Left) -->
 	{ N2 is N + 1,
 	  (   N mod 2 =:= 0
 	  ->  Class = even
@@ -2313,7 +2314,7 @@ table_rows([H|T], Goal, N, Left) -->
 	  Left2 is Left - 1
 	},
 	html(tr(class(Class), \call(Goal, H))),
-	table_rows(T, Goal, N2, Left2).
+	table_rows(Goal, T, N2, Left2).
 
 delete_list_prefix(0, List, List) :- !.
 delete_list_prefix(_, [], []) :- !.
