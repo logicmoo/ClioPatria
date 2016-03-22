@@ -25,9 +25,9 @@
 	  [ http_show_settings/3,	% +Options
 	    http_apply_settings/4	% +Request, +Options
 	  ]).
-:- use_module(library('http/html_write')).
-:- use_module(library('http/html_head')).
-:- use_module(library('http/http_parameters')).
+:- use_module(library(http/html_write)).
+:- use_module(library(http/html_head)).
+:- use_module(library(http/http_parameters)).
 :- use_module(library(option)).
 :- use_module(library(lists)).
 :- use_module(library(pairs)).

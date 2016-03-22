@@ -29,7 +29,7 @@
 	  ]).
 :- use_module(serql).
 :- use_module(library(rdf_ntriples)).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
 :- use_module(library(readutil)).
 :- use_module(library(debug)).
 :- use_module(rdfs_entailment, []).

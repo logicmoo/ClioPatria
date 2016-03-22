@@ -34,7 +34,7 @@
 	  ]).
 :- use_module(rdfql(rdfql_runtime)).	% runtime tests
 :- use_module(library(nb_set)).
-:- use_module(library('semweb/rdf_db'),
+:- use_module(library(semweb/rdf_db),
 	      [ rdf_current_predicate/1,
 		rdf_global_id/2,
 		rdf_reachable/3,
@@ -44,7 +44,7 @@
 		(rdf_meta)/1,
 		op(_,_,_)
 	      ]).
-:- use_module(library('semweb/rdfs'),
+:- use_module(library(semweb/rdfs),
 	      [ rdfs_subclass_of/2,
 		rdfs_subproperty_of/2
 	      ]).

@@ -34,7 +34,7 @@
 	    write_graph/2,	% +Triples, +Options
 	    get_triples/3	% +Input, -Triples, +Options
 	  ]).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
 :- use_module(library(rdf_write)).
 :- use_module(library(rdf)).
 :- use_module(library(lists)).

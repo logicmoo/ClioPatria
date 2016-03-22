@@ -36,7 +36,7 @@
 	  ]).
 :- use_module(library(xsdp_types)).
 :- use_module(library(debug)).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

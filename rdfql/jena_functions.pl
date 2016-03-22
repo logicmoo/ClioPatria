@@ -30,7 +30,7 @@
 */
 
 :- module(jena_functions, []).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
 :- use_module(sparql_runtime).
 
 /** <module> Jena function library

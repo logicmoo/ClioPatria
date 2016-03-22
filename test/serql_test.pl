@@ -28,12 +28,8 @@ the optimised code produces reasonable results. Can we compute and check
 the produced complexity?
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-:- load_files([ library('semweb/rdf_db'),
-		serql
-	      ],
-	      [ if(not_loaded),
-		silent(true)
-	      ]).
+:- use_module(library(semweb/rdf_db)).
+:- use_module(serql).
 :- use_module(rdf_entailment, []).
 
 % :- debug(serql(compiled)).

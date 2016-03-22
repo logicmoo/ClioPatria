@@ -35,7 +35,7 @@
 	    xml_to_result_table/3	% +XML, -Rows, -VarNames
 	  ]).
 :- use_module(library(assoc)).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
 :- use_module(library(sgml)).
 
 :- multifile

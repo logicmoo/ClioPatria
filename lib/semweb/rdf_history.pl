@@ -38,13 +38,13 @@
 	    rdfh_triple_transaction/2,	% +Triple, -Transaction
 	    rdfh_transaction_member/2	% ?Action, +Transaction
 	  ]).
-:- use_module(library('http/http_session')).
+:- use_module(library(http/http_session)).
 :- use_module(library(lists)).
 :- use_module(library(record)).
 :- use_module(library(error)).
 :- use_module(library(debug)).
-:- use_module(library('semweb/rdf_persistency')).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_persistency)).
+:- use_module(library(semweb/rdf_db)).
 
 
 /** <module> RDF Persistent store change history
