@@ -82,6 +82,7 @@ ClioPatria skin.
 		http_reply_file(icons('favicon.ico'), []),
 		[]).
 
+:- set_setting(jquery:version, '2.2.0.min').
 :- if(debugging(css(bootstrap))).
   :- html_resource(
        css(bootstrap),
