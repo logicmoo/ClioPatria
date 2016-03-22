@@ -28,7 +28,12 @@
 */
 
 :- module(html_basics,
-	  [ hidden//2,			% +Name, +Value
+	  [ cp_table//1,		% :DataRows_2
+	    cp_table//2,		% :HeaderRow_2, :DataRows_2
+	    cp_table//3,		% :Caption_2, :HeaderRow_2, :DataRows_2
+	    cp_table_header//1,		% +Headers
+	    cp_table_row//1,		% +Row
+	    hidden//2,			% +Name, +Value
 	    form_input//2,		% +Label, +Input
 	    form_submit//1,		% +Label
 	    n//2,			% +Format, +Value
@@ -47,7 +52,11 @@
 :- use_module(library(http/http_wrapper)).
 
 :- html_meta((
+	cp_table(html, ?, ?),
+	cp_table(html, html, ?, ?),
+	cp_table(html, html, html, ?, ?),
 	form_input(html, html, ?, ?),
+	html_maplist(3, +, ?, ?),
 	odd_even_row(+, -, html, ?, ?),
 	sort_th(+, +, html, ?, ?))).
 
@@ -94,6 +103,44 @@ form_submit(Label) -->
 		 /*******************************
 		 *	       TABLES		*
 		 *******************************/
+
+%! cp_table(:DataRows_2)// is det.
+
+cp_table(DataRows_2) -->
+  cp_table(_, DataRows_2).
+
+
+%! cp_table(:HeaderRow_2, :DataRows_2)// is det.
+
+cp_table(HeaderRow_2, DataRows_2) -->
+  cp_table(_, HeaderRow_2, DataRows_2).
+
+
+%! cp_table(:Caption_2, :HeaerRow_2, :DataRows_2)// is det.
+
+cp_table(Caption_2, HeaderRow_2, DataRows_2) -->
+  html(
+    table(class=[block,table,'table-condensed','table-striped'], [
+      \cp_table_caption(Caption_2),
+      \cp_table_header_row(HeaderRow_2),
+      tbody(DataRows_2)
+    ])
+  ).
+
+cp_table_caption(Content_2) --> {var_goal(Content_2)}, !, [].
+cp_table_caption(Content_2) --> html(Content_2).
+
+cp_table_header_row(HeaderRow_2) --> {var_goal(HeaderRow_2)}, !, [].
+cp_table_header_row(HeaderRow_2) --> html(thead(HeaderRow_2)).
+
+cp_table_row(L) --> html(tr(\html_maplist(cp_table_cell, L))).
+
+cp_table_cell(X) --> html(td(X)).
+
+cp_table_header(L) --> html(tr(\html_maplist(cp_table_header_cell, L))).
+
+cp_table_header_cell(X) --> html(th(X)).
+
 
 %%	nc(+Format, +Value)// is det.
 %%	nc(+Format, +Value, +Options)// is det.
@@ -165,6 +212,22 @@ sort_th(Name, _By, Label) -->
 	  http_reload_with_parameters(Request, [sort_by(Name)], HREF)
 	},
 	html(th(a([href(HREF), class(resort)], Label))).
+
+
+		 /*******************************
+		 *	       META		*
+		 *******************************/
+
+%! html_maplist(:Goal_3, +Args1) .
+
+html_maplist(_, []) --> [].
+html_maplist(Goal_3, [H|T]) -->
+  call(Goal_3, H),
+  html_maplist(Goal_3, T).
+
+
+var_goal(X):- var(X), !.
+var_goal(_:X):- var(X).
 
 
 		 /*******************************
