@@ -82,6 +82,42 @@ ClioPatria skin.
 		http_reply_file(icons('favicon.ico'), []),
 		[]).
 
+:- if(debugging(css(bootstrap))).
+  :- html_resource(
+       css(bootstrap),
+       [requires([css('bootstrap-3.3.6.css')]),virtual(true)]
+     ).
+:- else.
+  :- html_resource(
+       css(bootstrap),
+       [requires([css('bootstrap-3.3.6.min.css')]),virtual(true)]
+     ).
+:- endif.
+
+:- if(debugging(css('bootstrap-theme'))).
+  :- html_resource(
+       css('bootstrap-theme'),
+       [ordered(true),requires([css(bootstrap),css('bootstrap-theme-3.3.6.css')]),virtual(true)]
+     ).
+:- else.
+  :- html_resource(
+       css('bootstrap-theme'),
+       [ordered(true),requires([css(bootstrap),css('bootstrap-theme-3.3.6.min.css')]),virtual(true)]
+     ).
+:- endif.
+
+:- if(debugging(js(bootstrap))).
+  :- html_resource(
+       js(bootstrap),
+       [ordered(true),requires([jquery,js('bootstrap-3.3.6.js')]),virtual(true)]
+     ).
+:- else.
+  :- html_resource(
+       js(bootstrap),
+       [ordered(true),requires([jquery,js('bootstrap-3.3.6.min.js')]),virtual(true)]
+     ).
+:- endif.
+
 :- html_resource(js('cliopatria.js'),
 		 [ requires([jquery])
 		 ]).
