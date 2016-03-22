@@ -37,6 +37,7 @@
 	      [ rdf_global_id/2,
 		rdf_subject/1,
 		rdf_current_predicate/1,
+		rdf_is_literal/1,
 		(rdf_meta)/1,
 		op(_,_,_)
 	      ]).
