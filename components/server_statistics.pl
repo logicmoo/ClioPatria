@@ -65,7 +65,7 @@ rdf_call_statistics_table -->
 		   [ tr([ th(colspan(Cols), 'Indexed (SOPG)'),
 			  th('Calls')
 			]),
-		     \lookup_statistics(Lookup, 1)
+		     \lookup_statistics(Lookup)
 		   ])).
 
 rdf_call_stats(Lookup) :-
@@ -73,11 +73,10 @@ rdf_call_stats(Lookup) :-
 		rdf_statistics(lookup(Index, Count)),
 		Lookup).
 
-lookup_statistics([], _) -->
-	[].
-lookup_statistics([H|T], Row) -->
-	odd_even_row(Row, Next, \lookup_row(H)),
-	lookup_statistics(T, Next).
+lookup_statistics([]) --> [].
+lookup_statistics([H|T]) -->
+	html(tr(\lookup_row(H))),
+	lookup_statistics(T).
 
 lookup_row(rdf(S,P,O)-Count) -->
 	html([ \i(S), \i(P), \i(O), \nc(human, Count)]).
@@ -102,7 +101,7 @@ http_session_table -->
 		     ],
 		     [ tr([th('User'), th('Real Name'),
 			   th('On since'), th('Idle'), th('From')])
-		     | \sessions(Sessions, 1)
+		     | \sessions(Sessions)
 		     ])
 	     ]).
 http_session_table -->
@@ -120,10 +119,10 @@ session(s(Idle, User, SessionID, Peer)) :-
 	;   User = (-)
 	).
 
-sessions([], _) --> [].
-sessions([H|T], Row) -->
-	odd_even_row(Row, Next, \session(H)),
-	sessions(T, Next).
+sessions([]) --> [].
+sessions([H|T]) -->
+	html(tr(\session(H))),
+	sessions(T).
 
 session(s(Idle, -, _SessionID, Peer)) -->
 	html([td(-), td(-), td(-), td(\idle(Idle)), td(\ip(Peer))]).
@@ -187,11 +186,11 @@ server_stats(Port-Workers) -->
 	  format_time(string(ST), '%+', StartTime),
 	  cputime(CPU)
 	},
-	html([ \server_stat('Port:', Port, odd),
-	       \server_stat('Started:', ST, even),
-	       \server_stat('Total CPU usage:', [\n('~2f',CPU), ' seconds'], odd),
+	html([ \server_stat('Port:', Port),
+	       \server_stat('Started:', ST),
+	       \server_stat('Total CPU usage:', [\n('~2f',CPU), ' seconds']),
 	       \request_statistics,
-	       \server_stat('# worker threads:', NWorkers, odd),
+	       \server_stat('# worker threads:', NWorkers),
 	       tr(th(colspan(6), 'Statistics by worker')),
 	       tr([ th('Thread'),
 		    th('CPU'),
@@ -200,12 +199,11 @@ server_stats(Port-Workers) -->
 		    th('Global'),
 		    th('Trail')
 		  ]),
-	       \http_workers(Workers, odd)
+	       \http_workers(Workers)
 	     ]).
 
-server_stat(Name, Value, OE) -->
-	html(tr(class(OE),
-		[ th([class(p_name), colspan(3)], Name),
+server_stat(Name, Value) -->
+	html(tr([ th([class(p_name), colspan(3)], Name),
 		  td([class(value),  colspan(3)], Value)
 		])).
 
@@ -216,21 +214,20 @@ request_statistics -->
 	{ cgi_statistics(requests(Count)),
 	  cgi_statistics(bytes_sent(Sent))
 	},
-	server_stat('Requests processed:', \n(human, Count), odd),
-	server_stat('Bytes sent:', \n(human, Sent), even).
+	server_stat('Requests processed:', \n(human, Count)),
+	server_stat('Bytes sent:', \n(human, Sent)).
 :- else.
 request_statistics --> [].
 :- endif.
 
 
-http_workers([], _) -->
+http_workers([]) -->
 	[].
-http_workers([H|T], OE) -->
-	{ odd_even(OE, OE2) },
-	http_worker(H, OE),
-	http_workers(T, OE2).
+http_workers([H|T]) -->
+	http_worker(H),
+	http_workers(T).
 
-http_worker(H, OE) -->
+http_worker(H) -->
 	{ thread_statistics(H, locallimit, LL),
 	  thread_statistics(H, globallimit, GL),
 	  thread_statistics(H, traillimit, TL),
@@ -239,7 +236,7 @@ http_worker(H, OE) -->
 	  thread_statistics(H, trailused, TU),
 	  thread_statistics(H, cputime, CPU)
 	},
-	html([ tr(class(OE),
+	html([ tr(
 		  [ td(rowspan(2), H),
 		    \nc('~3f', CPU, [rowspan(2)]),
 		    th('In use'),
@@ -247,16 +244,13 @@ http_worker(H, OE) -->
 		    \nc(human, GU),
 		    \nc(human, TU)
 		  ]),
-	       tr(class(OE),
+	       tr(
 		  [ th('Limit'),
 		    \nc(human, LL),
 		    \nc(human, GL),
 		    \nc(human, TL)
 		  ])
 	     ]).
-
-odd_even(even, odd).
-odd_even(odd, even).
 
 
 		 /*******************************
@@ -275,13 +269,13 @@ http_server_pool_table -->
 		     class(block)
 		   ],
 		   [ tr([th('Name'), th('Running'), th('Size'), th('Waiting'), th('Backlog')])
-		   | \server_pools(Sorted, 1)
+		   | \server_pools(Sorted)
 		   ])).
 
-server_pools([], _) --> [].
-server_pools([H|T], Row) -->
-	odd_even_row(Row, Next, \server_pool(H)),
-	server_pools(T, Next).
+server_pools([]) --> [].
+server_pools([H|T]) -->
+	html(tr(\server_pool(H))),
+	server_pools(T).
 
 server_pool(Pool) -->
 	{ findall(P, thread_pool_property(Pool, P), List),

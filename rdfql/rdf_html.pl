@@ -76,7 +76,7 @@ select_result_table(Rows, Options) -->
 	html(table([ class(block)
 		   ],
 		   [ \variables(Options)
-		   | \rows(Rows, Options, odd)
+		   | \rows(Rows, Options)
 		   ])).
 
 
@@ -92,13 +92,11 @@ varnames([Name|T]) -->
 	html(th(Name)),
 	varnames(T).
 
-rows([], _, _) --> [].
-rows([H|T], Options, Class) -->
-	{ H =.. [_|Cells],
-	  odd_even(Class, NextClass)
-	},
-	html(tr(class(Class), \cells(Cells, Options))),
-	rows(T, Options, NextClass).
+rows([], _) --> [].
+rows([H|T], Options) -->
+	{ H =.. [_|Cells] },
+	html(tr(\cells(Cells, Options))),
+	rows(T, Options).
 
 cells([], _) -->
 	[].
@@ -111,9 +109,6 @@ cell(H, _) -->
 	html(td(span(class(rdf_unbound), '<unbound>'))).
 cell(H, Options) -->
 	html(td(\rdf_link(H, Options))).
-
-odd_even(odd, even).
-odd_even(even, odd).
 
 
 		 /*******************************
@@ -145,19 +140,17 @@ consult_result_table(Triples, Options) -->
 	html(table([ class(block)
 		   ],
 		   [ tr([th('Subject'), th('Predicate'), th('Object')])
-		   | \triples(Triples, Options, odd)
+		   | \triples(Triples, Options)
 		   ])).
 
-triples([], _, _) -->
+triples([], _) -->
 	[].
-triples([H|T], Options, Class) -->
-	{ odd_even(Class, NextClass) },
-	triple(H, Options, Class),
-	triples(T, Options, NextClass).
+triples([H|T], Options) -->
+	triple(H, Options),
+	triples(T, Options).
 
-triple(rdf(S,P,O), Options, Class) -->
-	html(tr(class(Class),
-		[ td(\rdf_link(S, Options)),
+triple(rdf(S,P,O), Options) -->
+	html(tr([ td(\rdf_link(S, Options)),
 		  td(\rdf_link(P, Options)),
 		  td(\rdf_link(O, Options))])).
 

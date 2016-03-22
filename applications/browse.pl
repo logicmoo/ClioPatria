@@ -112,7 +112,7 @@ that allow back-office applications to reuse this infrastructure.
 
 :- meta_predicate
 	table_rows(3, +, ?, ?),
-	table_rows(3, +, +, +, ?, ?),
+	table_rows(3, +, +, ?, ?),
 	table_rows_top_bottom(3, +, +, +, ?, ?),
 	html_property_table(?, 0, ?, ?).
 
@@ -1502,25 +1502,15 @@ alt_sorted(none, default).
 
 lview_row(Options, S, Graphs, P-OList) -->
 	html([ td(class(predicate), \rdf_link(P, Options)),
-	       td(class(object), \object_list(OList, S, P, Graphs, Options, 1))
+	       td(class(object), \object_list(OList, S, P, Graphs, Options))
 	     ]).
 
-object_list([], _, _, _, _, _) --> [].
-object_list([H|T], S, P, Graphs, Options, Row) -->
-	{ NextRow is Row + 1,
-	  obj_class(Row, Class)
-	},
-	html(div(class(Class),
-		 [ \rdf_link(H, Options),
+object_list([], _, _, _, _) --> [].
+object_list([H|T], S, P, Graphs, Options) -->
+	html(div([ \rdf_link(H, Options),
 		   \graph_marks(S, P, H, Graphs)
 		 ])),
-	object_list(T, S, P, Graphs, Options, NextRow).
-
-obj_class(N, Class) :-
-	(   N mod 2 =:= 0
-	->  Class = even
-	;   Class = odd
-	).
+	object_list(T, S, P, Graphs, Options).
 
 graph_marks(_,_,_,[_]) --> !.
 graph_marks(S,P,O,Graphs) -->
@@ -2235,51 +2225,41 @@ pcell(H) -->
 
 
 %%	table_rows(:Goal, +DataList)// is det.
-%%	table_rows(:Goal, +DataList, +MaxTop, +MaxBottom)// is det.
+%%	table_rows(:Goal, +DataList, +MaxTop)// is det.
 %
 %	Emit a number of table rows (=tr=).   The content of each row is
-%	created by calling call(Goal, Data)  as   a  DCG.  The rows have
-%	alternating classes =even= and =odd=.  The first row is =odd=.
+%	created by calling call(Goal, Data)  as   a  DCG.
 %
-%	The variation table_rows//4  limits  the   size  of  the  table,
+%	The variation table_rows//3  limits  the   size  of  the  table,
 %	placing a cell with  class  =skip=,   indicating  the  number of
 %	skipped rows.
-%
-%	Note that we can also achieve  alternate colouring using the CSS
-%	pseudo classes =|tr:nth-child(odd)|= and =|tr:nth-child(even)|=.
 
 table_rows(Goal, Rows) -->
-	table_rows(Goal, Rows, 1, -1).
+	table_rows(Goal, Rows, -1).
 
 table_rows_top_bottom(Goal, Rows, inf, inf) --> !,
-	table_rows(Goal, Rows, 1, -1).
+	table_rows(Goal, Rows, -1).
 table_rows_top_bottom(Goal, Rows, MaxTop, MaxBottom) -->
 	{ length(Rows, Count) },
 	(   { MaxTop+MaxBottom >= Count }
-	->  table_rows(Goal, Rows, 1, -1)
+	->  table_rows(Goal, Rows, -1)
 	;   { Skip is Count-MaxBottom,
 	      delete_list_prefix(Skip, Rows, BottomRows),
 	      Skipped is Count-(MaxTop+MaxBottom)
 	    },
-	    table_rows(Goal, Rows, 1, MaxTop),
+	    table_rows(Goal, Rows, MaxTop),
 	    html(tr(class(skip),
 		    [ th(colspan(10), 'Skipped ~D rows'-[Skipped])
 		    ])),
-	    table_rows(Goal, BottomRows, 1, -1)
+	    table_rows(Goal, BottomRows, -1)
 	).
 
-table_rows(_, _, _, 0) --> !, [].
-table_rows(_, [], _, _) --> [].
-table_rows(Goal, [H|T], N, Left) -->
-	{ N2 is N + 1,
-	  (   N mod 2 =:= 0
-	  ->  Class = even
-	  ;   Class = odd
-	  ),
-	  Left2 is Left - 1
-	},
-	html(tr(class(Class), \call(Goal, H))),
-	table_rows(Goal, T, N2, Left2).
+table_rows(_, _, 0) --> !, [].
+table_rows(_, [], _) --> [].
+table_rows(Goal, [H|T], Left) -->
+	{ Left2 is Left - 1 },
+	html(tr(\call(Goal, H))),
+	table_rows(Goal, T, Left2).
 
 delete_list_prefix(0, List, List) :- !.
 delete_list_prefix(_, [], []) :- !.

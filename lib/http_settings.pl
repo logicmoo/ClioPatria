@@ -95,29 +95,27 @@ show_module(Module, _Settings, Options) -->
 	}, !.
 show_module(Module, Settings, Options) -->
 	show_module_header(Module, Options),
-	show_settings(Settings, Module, odd, Options).
+	show_settings(Settings, Module, Options).
 
 show_module_header(_Module, Options) -->
 	{ option(hide_module(true), Options, false)}, !.
 show_module_header(Module, _Options) -->
 	html(tr(th([colspan(2), class(group)], Module))).
 
-show_settings([], _, _, _) -->
+show_settings([], _, _) -->
 	[].
-show_settings([H|T], Module, EO, Options) -->
-	show_setting(H, Module, EO, Options),
-	{ negate_odd_even(EO, EO2) },
-	show_settings(T, Module, EO2, Options).
+show_settings([H|T], Module, Options) -->
+	show_setting(H, Module, Options),
+	show_settings(T, Module, Options).
 
-show_setting(H, Module, EO, Options) -->
+show_setting(H, Module, Options) -->
 	{ setting_property(Module:H, comment(Comment)),
 	  setting_property(Module:H, type(Type)),
 	  setting_title(Module:H, Title),
 	  setting(Module:H, Value),
 	  debug(settings, '~w: type=~w', [H, Type])
 	},
-	html(tr(class(EO),
-		[ td([class(comment), title(Title)], Comment),
+	html(tr([ td([class(comment), title(Title)], Comment),
 		  td(class(value),
 		     \show_value(Type, Value, Module:H, Options))
 		])).
@@ -142,16 +140,15 @@ show_value(Type, Value, _, _Options) -->
 %	Emit a Value in non-editable representation.
 
 show_value(list(Type), Values) --> !,
-	html(div(class(list), \show_list(Values, Type, odd))).
+	html(div(class(list), \show_list(Values, Type))).
 show_value(_, Value) -->
 	html('~w'-[Value]).
 
-show_list([], _, _) -->
+show_list([], _) -->
 	[].
-show_list([H|T], Type, Class) -->
-	html(div(class(elem_+Class), \show_value(Type, H))),
-	{ negate_odd_even(Class, NextClass) },
-	show_list(T, Type, NextClass).
+show_list([H|T], Type) -->
+	show_value(Type, H),
+	show_list(T, Type).
 
 
 %%	input_value(+Type, +Value, +Id)// is det.
@@ -302,9 +299,3 @@ process_form_field(Id, RawValue) -->
 
 html_name(Module:Setting, Name) :-
 	atomic_list_concat([Module, Setting], ':', Name).
-
-
-%%	negate_odd_even(+OddEven, -EventOdd)
-
-negate_odd_even(odd, even).
-negate_odd_even(even, odd).

@@ -91,14 +91,14 @@ config_table(Options) -->
 	},
 	html(table(class(form),
 		   [ \config_table_header
-		   | \config_modules(Configs, 1, Options)
+		   | \config_modules(Configs, Options)
 		   ])).
 
 config_table_header -->
 	html(tr(class(header),
 		[th('Config'), th('Title'), th('Status')])).
 
-config_modules([], _, Options) -->
+config_modules([], Options) -->
 	(   { option(edit(true), Options) }
 	->  html(tr(class(buttons),
 		    td([ colspan(3), align(right), style('padding-top:1em;')
@@ -108,10 +108,10 @@ config_modules([], _, Options) -->
 		       ])))
 	;   []
 	).
-config_modules([H|T], OE, Options) -->
+config_modules([H|T], Options) -->
 	{ config_module_status(H, Status) },
-	odd_even_row(OE, OE1, \config_module(Status, H, Options)),
-	config_modules(T, OE1, Options).
+	html(tr(\config_module(Status, H, Options))),
+	config_modules(T, Options).
 
 config_module_status(_-[_,-], not) :- !.
 config_module_status(_-[-,_], local) :- !.
