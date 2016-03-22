@@ -899,7 +899,7 @@ string([C0|T]) -->
 string_char(0'\\) -->
 	"\\\\".
 string_char(0'") -->
-	"\\\"".
+	"\\\"". %"
 string_char(10) -->
 	"\\n".
 string_char(13) -->
@@ -1211,19 +1211,17 @@ result_table(CPU, Subjects, Triples) -->
 	{ rdf_statistics(triples(TriplesNow)),
 	  subjects(SubjectsNow)
 	},
-	html([ h4('Operation completed'),
-	       table([ id('result'),
-		       class(block)
-		     ],
-		     [ tr([td(class(empty), ''), th('+/-'), th('now')]),
-		       tr([th(class(p_name), 'CPU time'),
-			   \nc('~3f', CPU), td('')]),
-		       tr([th(class(p_name), \subj_label),
-			   \nc('~D', Subjects), \nc('~D', SubjectsNow)]),
-		       tr([th(class(p_name), 'Triples'),
-			   \nc('~D', Triples), \nc('~D', TriplesNow)])
-		     ])
-	     ]).
+	html([
+	  h4('Operation completed'),
+	  \cp_table(
+	    \cp_table_header(["","+/-","now"]),
+	    [
+	      tr([th(class(p_name), 'CPU time'), \nc('~3f', CPU), td('')]),
+	      tr([th(class(p_name), \subj_label), \nc('~D', Subjects), \nc('~D', SubjectsNow)]),
+	      tr([th(class(p_name), 'Triples'), \nc('~D', Triples), \nc('~D', TriplesNow)])
+	    ]
+	  )
+	]).
 
 
 %%	authorized_api(+Action, +ResultFormat) is det.

@@ -67,10 +67,10 @@ version_info(_Request) :-
 
 git_modules -->
 	{ findall(C-V, git_module_property(C, version(V)), Pairs) },
-	html(table(class(block),
-		   [ tr([ th('GIT module'), th('Version'), th('Directory') ]),
-		     \git_modules(Pairs)
-		   ])).
+	cp_table(
+	  \cp_table_header(["GIT module","Version","Directory"]),
+	  \git_modules(Pairs)
+	).
 
 git_modules([]) --> [].
 git_modules([H|T]) -->

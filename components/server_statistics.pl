@@ -56,17 +56,14 @@
 rdf_call_statistics_table -->
 	{ rdf_call_stats(Lookup),
 	  (   Lookup = [rdf(_,_,_)-_|_]
-	  ->  Cols = 3
-	  ;   Cols = 4
+	  ->  T = ["#Calls"]
+	  ;   T = ["G","#Calls"]
 	  )
 	},
-	html(table([ class(block)
-		   ],
-		   [ tr([ th(colspan(Cols), 'Indexed (SOPG)'),
-			  th('Calls')
-			]),
-		     \lookup_statistics(Lookup)
-		   ])).
+	cp_table(
+	  \cp_table_header(["S","P","O"|T]),
+	  \lookup_statistics(Lookup)
+	).
 
 rdf_call_stats(Lookup) :-
 	findall(Index-Count,
@@ -97,13 +94,10 @@ http_session_table -->
 	  sort(Sessions0, Sessions),
 	  Sessions \== [], !
 	},
-	html([ table([ class(block)
-		     ],
-		     [ tr([th('User'), th('Real Name'),
-			   th('On since'), th('Idle'), th('From')])
-		     | \sessions(Sessions)
-		     ])
-	     ]).
+	cp_table(
+	  \cp_table_header(["User","Real Name","On since","Idle","From"]),
+	  \sessions(Sessions)
+	).
 http_session_table -->
 	html(p('No users logged in')).
 
@@ -164,11 +158,7 @@ http_server_statistics -->
 	{ findall(Port-ID, http_current_worker(Port, ID), Workers),
 	  group_pairs_by_key(Workers, Servers)
 	},
-	html([ table([ class(block)
-		     ],
-		     [ \servers_stats(Servers)
-		     ])
-	     ]).
+	cp_table([\servers_stats(Servers)]).
 
 servers_stats([]) --> [].
 servers_stats([H|T]) -->
@@ -265,12 +255,10 @@ http_server_pool_table -->
 	{ findall(Pool, current_thread_pool(Pool), Pools),
 	  sort(Pools, Sorted)
 	},
-	html(table([ id('http-server-pool'),
-		     class(block)
-		   ],
-		   [ tr([th('Name'), th('Running'), th('Size'), th('Waiting'), th('Backlog')])
-		   | \server_pools(Sorted)
-		   ])).
+	cp_table(
+	  \cp_table_header(["Name","Running","Size","Waiting","Backlog"]),
+	  \server_pools(Sorted)
+	).
 
 server_pools([]) --> [].
 server_pools([H|T]) -->

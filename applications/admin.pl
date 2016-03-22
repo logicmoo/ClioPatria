@@ -43,6 +43,7 @@
 :- use_module(library(lists)).
 :- use_module(library(option)).
 :- use_module(library(http_settings)).
+:- use_module(components(basics)).
 
 /** <module> ClioPatria administrative interface
 
@@ -104,18 +105,11 @@ if_allowed(_, _, []).
 %	HTML component generating a table of registered users.
 
 user_table(Options) -->
-	{ setof(U, current_user(U), Users)
-	},
-	html([ table([ class(block)
-		     ],
-		     [ tr([ th('UserID'),
-			    th('RealName'),
-			    th('On since'),
-			    th('Idle')
-			  ])
-		     | \list_users(Users, Options)
-		     ])
-	     ]).
+	{ setof(U, current_user(U), Users) },
+	cp_table(
+	  \cp_table_header(["UserID","Real name","On since","Idle"]),
+	  \list_users(Users, Options)
+	).
 
 list_users([], _) -->
 	[].
@@ -895,14 +889,10 @@ openid_property(Server, Name, Label, Options) -->
 openid_server_table(Options) -->
 	{ setof(S, openid_current_server(S), Servers), !
 	},
-	html([ table([ class(block)
-		     ],
-		     [ tr([ th('Server'),
-			    th('Description')
-			  ])
-		     | \openid_list_servers(Servers, Options)
-		     ])
-	     ]).
+	cp_table(
+	  \cp_table_header(["Server","Description"]),
+	  \openid_list_servers(Servers, Options)
+	).
 openid_server_table(_) -->
 	[].
 
@@ -1036,16 +1026,6 @@ save_settings(Request) :-
 		 /*******************************
 		 *		EMIT		*
 		 *******************************/
-
-%%	hidden(+Name, +Value)
-%
-%	Create a hidden input field with given name and value
-
-hidden(Name, Value) -->
-	html(input([ type(hidden),
-		     name(Name),
-		     value(Value)
-		   ])).
 
 action(URL, Label) -->
 	html([a([href(URL)], Label), br([])]).

@@ -39,6 +39,7 @@
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/rdfs)).
 
+:- use_module(components(basics)).
 :- use_module(components(label)).
 
 
@@ -72,25 +73,14 @@ rdf_io:write_table(html, _Serialization, Rows, Options) :- !,
 			]).
 
 select_result_table(Rows, Options) -->
-	html_requires(css('rdf.css')),
-	html(table([ class(block)
-		   ],
-		   [ \variables(Options)
-		   | \rows(Rows, Options)
-		   ])).
-
-
-variables(Options) -->
 	{ memberchk(variables(Vars), Options),
 	  Vars =.. [_|Names]
-	}, !,
-	html(tr(\varnames(Names))).
-
-varnames([]) -->
-	[].
-varnames([Name|T]) -->
-	html(th(Name)),
-	varnames(T).
+	},
+	html_requires(css('rdf.css')),
+	cp_table(
+	  \cp_table_header(Names),
+	  \rows(Rows, Options)
+	).
 
 rows([], _) --> [].
 rows([H|T], Options) -->
@@ -137,11 +127,10 @@ rdf_io:write_graph(html, _Serialization, Triples, Options) :-
 
 consult_result_table(Triples, Options) -->
 	html_requires(css('rdf.css')),
-	html(table([ class(block)
-		   ],
-		   [ tr([th('Subject'), th('Predicate'), th('Object')])
-		   | \triples(Triples, Options)
-		   ])).
+	cp_table(
+	  \cp_table_header(["Subject","Predicate","Object"]),
+	  \triples(Triples, Options)
+	).
 
 triples([], _) -->
 	[].
