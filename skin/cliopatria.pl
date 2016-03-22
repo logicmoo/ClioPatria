@@ -32,16 +32,21 @@
 	  [ server_address//1,		% +Component
 	    current_page_doc_link//0
 	  ]).
+:- use_module(library(debug)).
+:- use_module(library(doc_http)). % Load plDoc.
 :- use_module(library(http/html_write)).
 :- use_module(library(http/html_head)).
 :- use_module(library(http/http_wrapper)).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_path)).
 :- use_module(library(http/jquery)).
+:- use_module(library(pldoc/doc_index)). % plDoc search menu.
+:- use_module(library(settings)).
 :- use_module(library(version)).
 :- use_module(components(menu)).
 :- use_module(components(simple_search)).
 :- use_module(applications(help/version)).
+:- include(library(pldoc/hooks)).
 
 /** <module> ClioPatria skin
 
@@ -84,6 +89,7 @@ ClioPatria skin.
 		[]).
 
 :- set_setting(jquery:version, '2.2.0.min').
+
 :- if(debugging(css(bootstrap))).
   :- html_resource(
        css(bootstrap),
@@ -123,14 +129,11 @@ ClioPatria skin.
 :- html_resource(js('cliopatria.js'),
 		 [ requires([jquery])
 		 ]).
-:- html_resource(plain,
+:- html_resource(default,
 		 [ virtual(true),
-		   requires([ css('plain.css')
-			    ])
-		 ]).
-:- html_resource(cliopatria,
-		 [ virtual(true),
-		   requires([ css('cliopatria.css'),
+		   requires([ css('bootstrap-theme'),
+			      css('cliopatria.css'),
+			      js(bootstrap),
 			      js('cliopatria.js')
 			    ])
 		 ]).
@@ -141,49 +144,108 @@ ClioPatria skin.
 %	pages with the Style cliopatria(_).
 
 :- multifile
+	user:head//2,
 	user:body//2.
 
-user:body(cliopatria(Style), Body) -->
-	cliopatria:page_body(cliopatria(Style), Body), !.
-user:body(cliopatria(_), Body) -->
-	cliopatria:page_body(Body), !.
-user:body(cliopatria(plain), Body) -->
-	html_requires(plain),
-	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_logo_and_menu),
-		    \simple_search_form([value(p(q))]),
-		    br(clear(all)),
-		    div([id('cp-content'), class(content)], Body),
-		    br(clear(all)),
-		    div([id('cp-footer'), class(footer)], \address)
-		  ])).
-user:body(cliopatria(_), Body) -->
-	html_requires(cliopatria),
-	html(body(class(['yui-skin-sam', cliopatria]),
-		  [ div([id('cp-menu'), class(menu)], \cp_logo_and_menu),
-		    \simple_search_form([value(p(q))]),
-		    br(clear(all)),
-		    div([id('cp-content'), class(content)], Body),
-		    br(clear(all)),
-		    div([id('cp-footer'), class(footer)], \address)
-		  ])).
+user:head(cliopatria(_), Head) -->
+	html(
+	  head([
+	    \meta(author, 'Jan Wielemaker & Wouter Beek & Jacco van Ossenbruggen & Michiel Hildebrand'),
+	    \meta(description, 'ClioPatria is a Prolog-based Triple Store'),
+	    \meta(keywords, 'Triple Store, Linked Open Data, Semantic Web, Prolog'),
+	    \meta(viewport, 'width=device-width,initial-scale=1')
+	  | Head
+	  ])
+	).
 
-cp_logo_and_menu -->
-	cp_logo,
-	cp_menu.
+meta(N, V) -->
+	html(meta([name=N,content=V], [])).
+
+% Overrule default style with cliopatria:page_body//1.
+user:body(cliopatria(_), Content) -->
+	cliopatria:page_body(Content), !.
+% Overrule default style with cliopatria:page_body//2.
+user:body(cliopatria(Style), Content) -->
+	cliopatria:page_body(cliopatria(Style), Content), !.
+% Default style.
+user:body(cliopatria(_), Content) -->
+	cp_body(div(class='col-xs-10', Content)).
+% Wiki style.
+user:body(pldoc(wiki), Content) -->
+	{ absolute_file_name(cliopatria(.), Dir, [access(read),file_type(directory)]) },
+	html_requires(default),
+	cp_body([\doc_links(Dir, [])|Content]).
+% Documentation style.
+user:body(pldoc(_), Content) -->
+	html_requires(default),
+	cp_body(Content).
+
+cp_body(Content) -->
+	html([
+	  \html_requires(default),
+	  body(class=[cliopatria,'yui-skin-sam'], [
+	    \cp_navbar,
+	    div(class='container-fluid',
+	      div(class=row,
+	        div(Content)
+	      )
+	    ),
+	    \cp_footer
+	  ])
+	]).
+
+cp_navbar -->
+	html(
+	  nav(class=[navbar,'navbar-default'],
+	    div(class='container-fluid', [
+	      \cp_logo,
+	      div(class=[collapse,'navbar-collapse'], [\cp_menu,\cp_search])
+	    ])
+	  )
+	).
 
 cp_logo -->
 	cliopatria:logo, !.
 cp_logo -->
+	html(
+	  div(class='navbar-header', [
+	    button([
+	      'aria-expanded'=false,
+	      class=['navbar-toggle',collapsed],
+	      'data-toggle'=collapse,
+	      type=button
+	    ], [
+	      span(class='sr-only', 'Toggle navigation'),
+	      span(class='icon-bar', []),
+	      span(class='icon-bar', []),
+	      span(class='icon-bar', [])
+	    ]),
+	    \cp_logo_image
+	  ])
+	).
+
+cp_logo_image -->
 	{ File = 'cliopatria-logo.png',
           absolute_file_name(icons(File), _Logo,
 			     [access(read), file_errors(fail)]),
 	  http_absolute_location(icons(File), Src, []),
 	  http_link_to_id(home, [], Home)
 	},
-	html(a([class(logo), href(Home), style('float:left')
-	       ],
-	       img([src(Src)]))).
+	html(
+	  a([class=[logo,'navbar-brand'], href=Home],
+	    img([height='25px',src=Src])
+	  )
+	).
+
+cp_search -->
+	simple_search_form([value(p(q))]).
+
+cp_footer -->
+	html(
+	  footer([class='bs-docs-footer',role=contentinfo],
+	    div(class=container, \address)
+	  )
+	).
 
 %%	address//
 %

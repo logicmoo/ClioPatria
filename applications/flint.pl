@@ -77,7 +77,7 @@ sparql_editor(_Request) :-
 			\no_flint).
 sparql_editor(_Request) :-
 	reply_html_page(
-	    cliopatria(plain),
+	    cliopatria(default),
 	    title('Flint SPARQL Editor'),
 	    \flint_page).
 
