@@ -58,6 +58,11 @@
 	    query_test/1		% +NameOrIRI
 	  ]).
 
+:- dynamic
+	user:file_search_path/2.
+:- multifile
+	user:file_search_path/2.
+
 user:file_search_path(rdfql, '../rdfql').
 user:file_search_path(entailment, '../entailment').
 user:file_search_path(library, '../lib').

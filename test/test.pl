@@ -21,7 +21,17 @@
     along with ClioPatria.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-:- use_module(serql).
+:- dynamic
+	user:file_search_path/2.
+:- multifile
+	user:file_search_path/2.
+
+user:file_search_path(entailment, '../entailment').
+user:file_search_path(library, '../lib').
+user:file_search_path(rdfql, '../rdfql').
+
+:- use_module('../parms').
+:- use_module(rdfql(serql)).
 
 query(s1, 'select * from {S} P {O}').
 query(s2, 'select * from {S} P {O1, O2}').
