@@ -108,7 +108,7 @@ call_showing_messages(Goal, Options) :-
 send_message(Level, Lines) :-
 	current_prolog_flag(html_messages, true),
 	level_css_class(Level, Class),
-	phrase(html(pre(class(Class), \html_message_lines(Lines))), Tokens),
+	phrase(html([span(class(Class), [\html_message_lines(Lines),'\n'])]), Tokens),
 	with_mutex(html_messages, print_html(Tokens)),
 	flush_output,
 	fail.
@@ -156,7 +156,7 @@ header(Style, Head, Header, Footer, FooterTokens) :-
 	append([ HList,
 		 [ \(cp_messages:html_requires(jquery)),
 		   img([id('smiley-thinking'), src(Image)]),
-		   div(class(messages), Magic),
+		   div(class(messages), pre(Magic)),
 		   \(cp_messages:js_script({|javascript||
 					    $("#smiley-thinking").hide(1000)|}))
 		 ],
