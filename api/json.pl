@@ -86,7 +86,7 @@ json_describe(Request) :-
 
 json_prefixes(_Request) :-
 	findall(Prefix-URI,
-		rdf_current_ns(Prefix, URI),
+		rdf_current_prefix(Prefix, URI),
 		Pairs),
 	dict_pairs(Dict, prefixes, Pairs),
 	reply_json(Dict).

@@ -65,7 +65,7 @@
 :- multifile
 	user:goal_expansion/2.
 
-:- rdf_register_ns(swrl, 
+:- rdf_register_prefix(swrl, 
 		   'http://www.w3.org/2003/11/swrl#',
 		   [ keep(true)
 		   ]).

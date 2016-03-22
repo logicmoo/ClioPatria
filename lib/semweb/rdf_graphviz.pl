@@ -45,7 +45,7 @@
 :- use_module(library(ugraphs)).
 :- use_module(library(semweb/rdf_label)).
 
-:- rdf_register_ns(graphviz, 'http://www.graphviz.org/').
+:- rdf_register_prefix(graphviz, 'http://www.graphviz.org/').
 
 /** <module> Interface to graphviz for RDF graphs
 

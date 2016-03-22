@@ -40,7 +40,7 @@
 ns(apf,   'http://jena.hpl.hp.com/ARQ/property#').
 ns(lists, 'http://jena.hpl.hp.com/ARQ/list#').
 ns(Prefix, URI) :-
-	rdf_current_ns(Prefix, URI).
+	rdf_current_prefix(Prefix, URI).
 
 alias('java:com.hp.hpl.jena.sparql.pfunction.library.',
       'http://jena.hpl.hp.com/ARQ/property#').

@@ -2301,7 +2301,7 @@ list_prefixes(Request) :-
 				 ])
 			]),
 	findall(Prefix-URI,
-		rdf_current_ns(Prefix, URI),
+		rdf_current_prefix(Prefix, URI),
 		Pairs),
 	keysort(Pairs, Sorted),
 	reply_html_page(cliopatria(default),

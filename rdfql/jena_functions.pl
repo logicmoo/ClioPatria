@@ -45,7 +45,7 @@
 ns(afn, 'http://jena.hpl.hp.com/ARQ/function#').
 ns(fn,  'http://www.w3.org/2005/xpath-functions#').
 ns(Prefix, URI) :-
-	rdf_current_ns(Prefix, URI).
+	rdf_current_prefix(Prefix, URI).
 
 alias('java:com.hp.hpl.jena.sparql.function.library.',
       'http://jena.hpl.hp.com/ARQ/function#').

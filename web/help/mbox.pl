@@ -2,8 +2,6 @@
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(http/http_dispatch)).
 
-:- rdf_register_ns(foaf, 'http://xmlns.com/foaf/0.1/').
-
 		 /*******************************
 		 *	      QUERIES		*
 		 *******************************/

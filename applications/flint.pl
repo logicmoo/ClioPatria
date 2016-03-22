@@ -130,11 +130,7 @@ namespace(json([ name(Prefix),
 		 prefix(Prefix),
 		 uri(URI)
 	       ])) :-
-	rdf_current_ns(Prefix, URI).
-
-:- if(\+current_predicate(rdf_current_ns/2)).
-rdf_current_ns(Prefix, URI) :- rdf_current_prefix(Prefix, URI).
-:- endif.
+	rdf_current_prefix(Prefix, URI).
 
 endpoint_parameters(
     json([ queryParameters =
