@@ -2326,9 +2326,7 @@ ns_table(turtle, Pairs) -->
 		 \turtle_prefixes(Pairs))).
 
 prefix_row(Prefix-URI) -->
-	html([ td(Prefix),
-	       td(URI)
-	     ]).
+	html([td(Prefix), td(a(href=URI,URI))]).
 
 turtle_prefixes(Pairs) -->
 	{ longest_prefix(Pairs, 0, Length),
