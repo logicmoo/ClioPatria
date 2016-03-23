@@ -27,7 +27,7 @@ cliopatria:menu_item/2.
 
 % Make our predicate respond to /prophier
 
-:- http_handler(root(prophier), property_hierarchy, []).
+:- http_handler(cliopatria(prophier), property_hierarchy, []).
 
 % add our application to the Places  menu.   300  is the location in the
 % menu (check cp_menu:menu_item/2 for the initial   menu). places is the

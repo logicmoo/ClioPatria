@@ -50,16 +50,16 @@ This module is part of the  SWI-Prolog web-developent infrastructure. It
 documents the HTTP server using the reflexive capabilities of Prolog and
 the server infrastructure. Self-documentation is enabled by loading this
 module. The entry-point of this module is   located at the HTTP location
-root(help/http), using the handler-identifier =http_help=.
+cliopatria(help/http), using the handler-identifier =http_help=.
 
 In    addition,    this     module      provides     the     _component_
 page_documentation_link//1, which shows a small   book  linking from the
 displayed page to its documentation.
 */
 
-:- http_handler(root(help/http),	     http_help,	      []).
-:- http_handler(root(help/http_handler),     help_on_handler, []).
-:- http_handler(root(help/http_ac_location), ac_location,     []).
+:- http_handler(cliopatria(help/http),             http_help,       []).
+:- http_handler(cliopatria(help/http_handler),     help_on_handler, []).
+:- http_handler(cliopatria(help/http_ac_location), ac_location,     []).
 
 %%	page_documentation_link(+Request)// is det.
 %

@@ -46,7 +46,7 @@ these mappings so they can be included in other documents.
 	incorrect.
 */
 
-:- http_handler(root('js/serverpaths.js'), serverpaths, []).
+:- http_handler(cliopatria('js/serverpaths.js'), serverpaths, []).
 
 :- dynamic
 	served_generation/2.

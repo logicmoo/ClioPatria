@@ -73,7 +73,7 @@ over the associated X.txt file.
 %	    ==
 %	    user:file_search_path(web_files, myapp(www)).
 %
-%	    :- http_handler(root(web), serve_page(web_files), [prefix]).
+%	    :- http_handler(cliopatria(web), serve_page(web_files), [prefix]).
 %	    ==
 
 serve_page(Alias, Request) :-

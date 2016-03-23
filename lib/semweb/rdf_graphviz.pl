@@ -611,7 +611,7 @@ cstring([H|T]) -->
 	),
 	cstring(T).
 
-cchar(0'") --> "\\\"".
+cchar(0'") --> "\\\"". %"
 cchar(0'\n) --> "\\n".
 cchar(0'\t) --> "\\t".
 cchar(0'\b) --> "\\b".
@@ -667,8 +667,8 @@ gv_class_style(Class, Style) :-
 % These handlers are relative to the handler of send_graph.  Possibly
 % it would be better to merge that code.
 
-:- http_handler(root('graphviz/cache/url/'), cached_image_in_svg, [prefix]).
-:- http_handler(root('graphviz/'),	     local_image_in_svg,  [prefix]).
+:- http_handler(cliopatria('graphviz/cache/url/'), cached_image_in_svg, [prefix]).
+:- http_handler(cliopatria('graphviz/'),           local_image_in_svg,  [prefix]).
 
 %%	cached_image_in_svg(+Request)
 %

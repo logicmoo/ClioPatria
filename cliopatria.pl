@@ -208,7 +208,7 @@ cp_server(Options) :-
 	option(after_load(AfterLoad), QOptions, true),
 	print_message(informational, cliopatria(server_started(Port))),
 	setup_call_cleanup(
-	    http_handler(root(.), busy_loading,
+	    http_handler(cliopatria(.), busy_loading,
 			 [ priority(1000),
 			   hide_children(true),
 			   id(busy_loading),

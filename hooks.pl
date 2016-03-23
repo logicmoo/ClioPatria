@@ -54,7 +54,7 @@ The example below adds an item to =Help= popup of ClioPatria:
 
     cliopatria:menu_item(help/about, 'About').
 
-    :- http_handler(root(about), about, []).
+    :- http_handler(cliopatria(about), about, []).
 
     about(Request) :-
 	<generate the about page>

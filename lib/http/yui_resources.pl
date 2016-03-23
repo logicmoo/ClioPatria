@@ -51,7 +51,7 @@ end up in the HTML =head=.
 % Define HTTP location paths, similar to the definition of file search
 % paths.
 
-http:location(www,	    root(www),		       []).
+http:location(www,	    cliopatria(www),	       []).
 http:location(script,	    www(script),	       [js(true)]).
 http:location(yui,	    yui_base(build),	       [js(true)]).
 http:location(yui_examples, yui_base(examples),	       [js(true)]).

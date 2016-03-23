@@ -46,7 +46,7 @@ This module provides the  component   http_tree_view//1  and  associated
 helpers.
 */
 
-:- http_handler(root(help/expand_http_node), expand_http_node, []).
+:- http_handler(cliopatria(help/expand_http_node), expand_http_node, []).
 
 %%	http_tree_view(+Options)//
 %
