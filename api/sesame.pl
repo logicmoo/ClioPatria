@@ -31,7 +31,6 @@
 :- module(api_sesame,
 	  [ api_action/4		% +Request, +Goal, +Format, +Message
 	  ]).
-:- use_module(rdfql(serql)).
 :- use_module(rdfql(sparql)).
 :- use_module(rdfql(rdf_io)).
 :- use_module(rdfql(rdf_html)).
@@ -157,7 +156,6 @@ evaluate_query(Request) :-
 	http_parameters(Request,
 			[ repository(Repository),
 			  query(Query),
-			  queryLanguage(QueryLanguage),
 			  resultFormat(ResultFormat),
 			  serialization(Serialization),
 			  resourceFormat(ResourceFormat),
@@ -168,13 +166,12 @@ evaluate_query(Request) :-
 			]),
 	result_format(Request, ResultFormat),
 	statistics(cputime, CPU0),
-	downcase_atom(QueryLanguage, QLang),
-	compile(QLang, Query, Compiled,
-		[ entailment(Entailment),
-		  type(Type)
-		]),
+	sparql_compile(Query, Compiled,
+		       [ entailment(Entailment),
+			 type(Type)
+		       ]),
 	authorized_query(Type, Repository, ResultFormat),
-	findall(Reply, run(QLang, Compiled, Reply), Result),
+	findall(Reply, sparql_run(Compiled, Reply), Result),
 	statistics(cputime, CPU1),
 	CPU is CPU1 - CPU0,
 	store_query(construct, SaveAs, Query),
@@ -221,7 +218,6 @@ evaluate_graph_query(Request) :-
 	http_parameters(Request,
 			[ repository(Repository),
 			  query(Query),
-			  queryLanguage(QueryLanguage),
 			  resultFormat(ResultFormat),
 			  serialization(Serialization),
 			  resourceFormat(ResourceFormat),
@@ -233,16 +229,15 @@ evaluate_graph_query(Request) :-
 	result_format(Request, ResultFormat),
 	authorized_api(read(Repository, query), ResultFormat),
 	statistics(cputime, CPU0),
-	downcase_atom(QueryLanguage, QLang),
-	compile(QLang, Query, Compiled,
-		[ entailment(Entailment),
-		  type(Type)
-		]),
+	sparql_compile(Query, Compiled,
+		       [ entailment(Entailment),
+			 type(Type)
+		       ]),
 	(   graph_type(Type)
 	->  true
 	;   throw(error(domain_error(query_type(graph), Type), _))
 	),
-	findall(T, run(QLang, Compiled, T), Triples),
+	findall(T, sparql_run(Compiled, T), Triples),
 	statistics(cputime, CPU1),
 	store_query(construct, SaveAs, Query),
 	CPU is CPU1 - CPU0,
@@ -264,7 +259,6 @@ evaluate_table_query(Request) :-
 	http_parameters(Request,
 			[ repository(Repository),
 			  query(Query),
-			  queryLanguage(QueryLanguage),
 			  resultFormat(ResultFormat),
 			  serialization(Serialization),
 			  resourceFormat(ResourceFormat),
@@ -276,12 +270,11 @@ evaluate_table_query(Request) :-
 	result_format(Request, ResultFormat),
 	authorized_api(read(Repository, query), ResultFormat),
 	statistics(cputime, CPU0),
-	downcase_atom(QueryLanguage, QLang),
-	compile(QLang, Query, Compiled,
-		[ entailment(Entailment),
-		  type(select(VarNames))
-		]),
-	findall(R, run(QLang, Compiled, R), Rows),
+	sparql_compile(Query, Compiled,
+		       [ entailment(Entailment),
+			 type(select(VarNames))
+		       ]),
+	findall(R, sparql_run(Compiled, R), Rows),
 	statistics(cputime, CPU1),
 	CPU is CPU1 - CPU0,
 	store_query(select, SaveAs, Query),
@@ -292,24 +285,6 @@ evaluate_table_query(Request) :-
 		      resource_format(ResourceFormat),
 		      cputime(CPU)
 		    ]).
-
-%%	compile(+Language, +Query, -Compiled, +Options)
-%
-%	Compile a query and validate the query-type
-
-compile(serql, Query, Compiled, Options) :- !,
-	serql_compile(Query, Compiled, Options).
-compile(sparql, Query, Compiled, Options) :- !,
-	sparql_compile(Query, Compiled, Options).
-compile(Language, _, _, _) :-
-	throw(error(domain_error(query_language, Language), _)).
-
-%%	run(+Language, +Compiled, -Reply)
-
-run(serql, Compiled, Reply) :-
-	serql_run(Compiled, Reply).
-run(sparql, Compiled, Reply) :-
-	sparql_run(Compiled, Reply).
 
 %%	extract_rdf(+Request)
 %
@@ -991,12 +966,7 @@ attribute_decl(repository,
 		 description('Name of the repository (ignored)')
 	       ]).
 attribute_decl(query,
-	       [ description('SPARQL or SeRQL quer-text')
-	       ]).
-attribute_decl(queryLanguage,
-	       [ default('SPARQL'),
-		 oneof(['SeRQL', 'SPARQL']),
-		 description('Query language used in query-text')
+	       [ description('SPARQL query text')
 	       ]).
 attribute_decl(serialization,
 	       [ default(rdfxml),
@@ -1004,7 +974,7 @@ attribute_decl(serialization,
 			 ntriples,
 			 n3
 		       ]),
-		 description('Serialization for graph-data')
+		 description('Serialization for graph data')
 	       ]).
 attribute_decl(resultFormat,
 	       [ optional(true),

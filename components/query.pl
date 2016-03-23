@@ -50,12 +50,8 @@ with a simple query-history mechanism for user-submitted SPARQL queries.
 %	HTMP component for an  interactive   (SPARQL)  query-form.  This
 %	calls to the handler with  id   =evaluate_query=.  Options is an
 %	option list:
-%
-%	    * query_languages(+List)
-%	    Query languages supported.  Default is ['SPARQL', 'SeRQL'].
-%	    Specifying only one removes the query-language menu.
 
-query_form(Options) -->
+query_form(_Options) -->
 	html([ form([ class(query),
 		      name(query),
 		      action(location_by_id(evaluate_query)),
@@ -63,11 +59,8 @@ query_form(Options) -->
 		    ],
 		    [ \hidden(repository, default),
 		      \hidden(serialization, rdfxml),
-		      h3([ 'Interactive ',
-			   \query_language(Options, Hidden),
-			   ' query'
+		      h3([ 'Interactive SPARQL query'
 			 ]),
-		      Hidden,
 		      table([ class(query)
 			    ],
 			    [ \store_recall(_, 3-2),
@@ -105,26 +98,6 @@ result_format -->
 		      option([], json),
 		      option([], csv)
 		    ])).
-
-query_language(Options, Hidden) -->
-	{ option(query_languages(LangList), Options, ['SPARQL', 'SeRQL'])
-	},
-	(   { LangList = [Lang] }
-	->  html([Lang]),
-	    { Hidden = \hidden(queryLanguage, Lang) }
-	;   { LangList = [DefLang|More] },
-	    html(select(name(queryLanguage),
-			[ option([selected], DefLang)
-			| \options(More)
-			])),
-	    { Hidden = '' }
-	).
-
-options([]) --> [].
-options([Value|T]) -->
-	html(option([], Value)),
-	options(T).
-
 
 resource_menu -->
 	html(select(name(resourceFormat),

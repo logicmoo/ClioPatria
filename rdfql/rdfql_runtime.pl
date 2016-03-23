@@ -35,12 +35,7 @@
 	    rdfql_cond_bind_null/1,	% +List
 	    rdfql_triple_in/2,		% -Triple, +Triples
 
-					% SeRQL support
-	    serql_compare/3,		% +Comparison, +Left, +Right
-	    serql_eval/2,		% +Term, -Evaluated
-	    serql_member_statement/2,	% -Triple, +List
-
-					% SPAQRL support
+					% SPARQL support
 	    sparql_true/1,		% +Term
 	    sparql_eval/2,		% +Expression, -Result
 	    sparql_find/5,		% ?From, ?To, ?F, ?T, :Q
@@ -52,7 +47,6 @@
 	  ]).
 :- use_module(library(nb_set)).
 :- use_module(library(debug)).
-:- use_module(serql_runtime).
 :- use_module(sparql_runtime).
 
 :- meta_predicate

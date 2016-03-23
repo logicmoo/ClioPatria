@@ -30,7 +30,6 @@
 
 :- module(cpa_user, []).
 
-:- use_module(rdfql(serql_xml_result)).
 :- use_module(library(http/http_open)).
 :- use_module(library(http/http_path)).
 :- use_module(library(http/html_head)).
@@ -210,7 +209,6 @@ query_form(_Request) :-
 	reply_html_page(cliopatria(default),
 			title('Specify a query'),
 			[ \query_form([]),
-			  \query_docs,
 			  \warn_interactive
 			]).
 
@@ -218,23 +216,22 @@ query_form(_Request) :-
 
 warn_interactive -->
 	{ http_location_by_id(sparql_query, HREF),
-	  SparqlAPI = 'http://www.w3.org/TR/rdf-sparql-protocol/'
+	  SparqlAPI = 'http://www.w3.org/TR/rdf-sparql-protocol/',
+	  SparqlDoc = 'https://www.w3.org/TR/sparql11-query/'
 	},
 	html([ br(clear(all)),
 	       p(class(footnote),
-		 [ 'This form is to test SPARQL queries ', i(interactively), '. ',
+		 [ 'ClioPatria implements the ', a(href(SparqlDoc),
+		   'SPARQL 1.1 query language'), ' except for ',
+		   i('federated queries'), ' i.e., ', code('service'), '.',
+		   br([]),
+		   'This form is to test SPARQL queries ', i(interactively), '. ',
 		   'Machines should use ', b([HREF,'?query=...']),
 		   ', which provides a ',
-		   a(href(SparqlAPI), 'SPARQL compliant HTTP API'), '.'
+		   a(href(SparqlAPI), 'SPARQL 1.1 compliant HTTP API'), '.'
 		 ])
 	     ]).
 
-query_docs -->
-	html(ul([ li(a(href('http://www.w3.org/TR/rdf-sparql-query/'),
-		       'SPARQL Documentation')),
-		  li(a(href('http://rdf4j.org/'),
-		       'Sesame and SeRQL site'))
-		])).
 
 %%	load_file_form(+Request)
 %
@@ -448,23 +445,6 @@ emit_base_ontologies([H|T]) -->
 get_base_ontologies(_Request, List) :-
 	catch(findall(O, library_ontology(O), List0), _, fail), !,
 	sort(List0, List).
-get_base_ontologies(Request, List) :-
-	http_current_host(Request, Host, Port, []),
-	http_location_by_id(list_base_ontologies, ListBaseOntos),
-	debug(base_ontologies, 'Opening http://~w:~w~w',
-	      [Host, Port, ListBaseOntos]),
-	http_open([ protocol(http),
-		    host(Host),
-		    port(Port),
-		    path(ListBaseOntos),
-		    search([resultFormat(xml)])
-		  ],
-		  In,
-		  [ % request_header('Cookie', Cookie)
-		  ]),
-	debug(base_ontologies, '--> Reading from ~w', [In]),
-	xml_read_result_table(In, Rows, _VarNames),
-	maplist(arg(1), Rows, List).
 
 %%	clear_repository_form(+Request)
 %
