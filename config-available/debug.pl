@@ -29,7 +29,7 @@ particular, it implements the following methods:
 
 :- use_module(library(http/http_error)).	% Print stack on error
 :- use_module(library(semweb/rdf_portray)).	% Print e.g., rdf:type
-:- use_module(user:library(semweb/rdf_db)).	% Allow ?- rdf(S,P,O). in toplevel
+:- use_module(user:library(semweb/rdf11)).	% Access RDF API from top-level
 
 :- debug_message_context(+time).		% Add time to debug message
 % Enable to see HTTP requests
