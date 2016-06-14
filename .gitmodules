@@ -6,7 +6,7 @@
 	url = ../sparql-1.1-test-cases.git
 [submodule "web/yasqe"]
 	path = web/yasqe
-	url = https://github.com/YASGUI/YASQE.git
+	url = https://github.com/OpenTriply/YASGUI.YASQE.git
 [submodule "web/yasr"]
 	path = web/yasr
-	url = https://github.com/YASGUI/YASR.git
+	url = https://github.com/OpenTriply/YASGUI.YASR.git
