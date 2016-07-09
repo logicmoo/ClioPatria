@@ -34,7 +34,7 @@
 :- use_module(library(semweb/rdf_db)).
 :- use_module(cliopatria(hooks)).
 
-:- rdf_register_prefix(user, 'http://www.swi-prolog.org/cliopatria/user/').
+:- rdf_register_prefix(cp_user, 'http://www.swi-prolog.org/cliopatria/user/').
 
 /** <module> User preference handling
 
