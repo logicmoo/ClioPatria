@@ -134,10 +134,10 @@ rdf_real_label(R, Lang, Label) :-
 	    Literal = literal(lang(L, _)),
 	    lang_matches(L, Lang)
 	->  true
-	;   user_preference(user:lang, literal(Lang)), % try fast option first:
+	;   user_preference(cp_user:lang, literal(Lang)), % try fast option first:
 	    rdf_label(R, literal(lang(Lang, Literal)))
 	->  true
-	;   user_preference(user:lang, literal(Lang)),
+	;   user_preference(cp_user:lang, literal(Lang)),
 	    % warning: BT over next call is quite expensive when R has labels in many languages:
 	    rdf_label(R, Literal),
 	    Literal = literal(lang(L, _)),
