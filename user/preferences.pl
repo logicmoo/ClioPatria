@@ -34,7 +34,7 @@
 :- use_module(library(semweb/rdf_db)).
 :- use_module(cliopatria(hooks)).
 
-:- rdf_register_prefix(user, 'http://www.swi-prolog.org/cliopatria/user/').
+:- rdf_register_prefix(cp_user, 'http://www.swi-prolog.org/cliopatria/user/').
 
 /** <module> User preference handling
 
@@ -63,7 +63,7 @@ expands to:
 %	data-representation.  E.g.,
 %
 %	    ==
-%	    ?- user_preference(user:lang, literal(Lang))
+%	    ?- user_preference(cp_user:lang, literal(Lang))
 %
 %	    Lang = en
 %	    ==
@@ -97,4 +97,4 @@ current_pref(P) :- builtin_default(P, _).
 %
 %	Provide defaults for commonly used preferences.
 
-builtin_default(user:lang, literal(en)).
+builtin_default(cp_user:lang, literal(en)).
