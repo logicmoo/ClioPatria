@@ -908,23 +908,12 @@ pattern_factor([_|T], F0, F) :-
 %	must be estimate using the branching factor of the relation.
 
 rdf_estimate_complexity(G, C) :-
-	rdf_db_goal(G, S, P0, O),
-	map_predicate(P0, P),
+	rdf_db_goal(G, S, P, O),
 	rdf_estimate_complexity(S, P, O, C).
-
-map(map_predicate(_,_)).
-map(map_predicate(_,_):-_).
 
 term_expansion(In, Out) :-
 	map(In), !,
 	rdf_global_term(In, Out).
-
-map_predicate(X, X) :-
-	var(X), !.
-map_predicate(serql:directSubClassOf,    rdfs:subClassOf) :- !.
-map_predicate(serql:directType,          rdf:type) :- !.
-map_predicate(serql:directSubPropertyOf, rdfs:subPropertyOf) :- !.
-map_predicate(X, X).
 
 
 		 /*******************************
