@@ -52,15 +52,12 @@
 :- meta_predicate
 	rdfql_carthesian(:).
 
-/** <module> SPARQL/SeRQL runtime support predicates
+/** <module> SPARQL runtime support predicates
 
 This module provides runtime support for  running compiled queries. I.e.
 it defines special constructs that may be   emitted  by the compiler and
 optmizer that are common  to  all   query  languages.  Language specific
-runtime support is in serql_runtime.pl and sparql_runtime.pl
-
-@see	serql_runtime.pl for the implementation of the SeRQL routines.
-@see	sparql_runtime.pl for the implementation of the SPARQL routines.
+runtime support is in and sparql_runtime.pl
 */
 
 		 /*******************************

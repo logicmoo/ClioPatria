@@ -85,10 +85,9 @@ algorithm is described in "An  optimised   Semantic  Web  query language
 implementation        in        Prolog",          available         from
 http://hcs.science.uva.nl/projects/SWI-Prolog/articles/ICLP05-SeRQL.pdf
 
-NOTES:
-
-	* SeRQL LIKE works on resources *and* literals.  Do we want this?
-	  See http://rdf4j.org/forum/mvnforum/viewthread?thread=275
+@tbd Deprecate: “SeRQL LIKE works on resources *and* literals.  Do we
+     want this?  See
+     http://rdf4j.org/forum/mvnforum/viewthread?thread=275”
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 :- multifile
@@ -129,11 +128,10 @@ rdf_optimise(Module:Goal) :-
 
 %%	rdf_optimise(+Goal, -Optimized) is det.
 %
-%	Goal is a Prolog control-structure with   calls to the rdf_db.pl
-%	and  SeRQL  runtime  predicates.  Optimized  is  a  semantically
-%	equivalent goal, obtained by re-ordering   conjunctions  in Goal
-%	and  processing  sub-queries  that  do    not   share  variables
-%	independently.
+%	Goal is a Prolog control-structure with calls to the rdf_db.pl
+%	runtime predicates.  Optimized is a semantically equivalent goal,
+%	obtained by re-ordering conjunctions in Goal and processing
+%	sub-queries that do not share variables independently.
 
 rdf_optimise(Conj, Optimised) :-
 	rdf_optimise(Conj, Optimised, _, _).
@@ -629,6 +627,8 @@ unbind([H|T]) :-
 %
 %	The (G*->_=true;_=false) clause deals with   the  code generated
 %	from optional graph specs as provided by SeRQL.
+%
+%	@tbd Deprecate SeRQL comment.
 
 complexity((A0,B0), (A,B), State, Sz0, Sz, C0, C) :- !,
 	complexity(A0, A, State, Sz0, Sz1, C0, C1),

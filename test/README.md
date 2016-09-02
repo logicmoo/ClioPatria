@@ -28,3 +28,5 @@ providing the test name as argument. E.g.,
   ```
 
 See the module header for more useful predicates to diagnose issues.
+
+@tbd Use the official SPARQL 1.1 tests.

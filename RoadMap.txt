@@ -53,8 +53,8 @@ from the top-left menu.
     using the menu-item *|File/Load base ontology|*.
 
     $ rdfql :
-    Implementation for RDF query languages: SPARQL and SeRQL. The
-    provided functionality is typically only used through the HTTP-API.
+    Implementation for the RDF query language SPARQL 1.1. The
+    provided functionality is typically only used through the HTTP API.
 
     $ skin :
     Defined skins.  Notable skins/cliopatria.pl defines the (hookable)

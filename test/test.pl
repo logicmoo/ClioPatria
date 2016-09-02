@@ -19,6 +19,8 @@
 
     You should have received a copy of the GNU General Public License
     along with ClioPatria.  If not, see <http://www.gnu.org/licenses/>.
+
+    @tbd Update all test cases from SeRQL to SPARQL 1.1.
 */
 
 :- dynamic

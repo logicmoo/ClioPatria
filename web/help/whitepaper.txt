@@ -135,10 +135,10 @@ name_mbox(Name, MBox) :-
     * Optimisation and unfolding can be used to achieve optimal
     performance at small cost.
 
-    * Instead of the predefined SPARQL and SeRQL functions and
-    conditions, we can apply any Prolog predicate as condition or
-    function anywhere in the query.  We can also introduce other
-    relations (e.g., from an RDBMS) into our predicates.
+    * Instead of the predefined SPARQL functions and conditions, we
+    can apply any Prolog predicate as condition or function anywhere
+    in the query.  We can also introduce other relations (e.g., from
+    an RDBMS) into our predicates.
 
     * The RDF store is tightly connected to Prolog.  This allows
     for arbitrary reasoning with and exploration of the RDF graph
@@ -221,7 +221,7 @@ ClioPatria.
     provides basic user-management and utilities to examine RDF
     data.
 
-    $ SeRQL/SPARQL endpoint :
+    $ SPARQL endpoint :
     Although generally not used for application development,
     the compliant RDF query endpoints make ClioPatria a standard
     component in Semantic Web applications that use such endpoints.

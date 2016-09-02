@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -98,12 +98,6 @@ rdf(S, rdfs:subPropertyOf, O) :- !,
 	;   individual_of(S, rdf:'Property'),
 	    rdfs_subproperty_of(S, O)
 	).
-rdf(S, serql:directSubClassOf, O) :- !,
-	rdf_has(S, rdfs:subClassOf, O).
-rdf(S, serql:directType, O) :- !,
-	rdf_has(S, rdf:type, O).
-rdf(S, serql:directSubPropertyOf, O) :- !,
-	rdf_has(S, rdfs:subPropertyOf, O).
 rdf(S, P, O) :-
 	rdf_has(S, P, O).
 

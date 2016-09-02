@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -59,7 +59,6 @@ efficiently  using  backward  chaining.  Notably    it   does  *not*  do
 type-reasoning on the basis of domains/ranges of properties. It does:
 
 	* Use the property hierarchy
-	* Define the serql special relations
 	* Handle rdfs:subClassOf as transitive
 	* Handle rdfs:subPropertyOf as transitive
 	* Handle rdf:type using subProperties and rdfs:subClassOf
@@ -74,12 +73,6 @@ type-reasoning on the basis of domains/ranges of properties. It does:
 rdf(S, P, O) :-
 	var(P), !,
 	rdf_db:rdf(S,P,O).
-rdf(S, serql:directSubClassOf, O) :- !,
-	rdf_has(S, rdfs:subClassOf, O).
-rdf(S, serql:directType, O) :- !,
-	rdf_has(S, rdf:type, O).
-rdf(S, serql:directSubPropertyOf, O) :- !,
-	rdf_has(S, rdfs:subPropertyOf, O).
 rdf(S, rdfs:subClassOf, O) :- ( atom(S) ; atom(O) ), !,
 	rdf_reachable(S, rdfs:subClassOf, O).
 rdf(S, rdfs:subClassOf, O) :- !,

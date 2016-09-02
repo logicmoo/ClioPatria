@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -70,12 +70,6 @@ rdf(S, rdf:type, rdfs:'Resource') :-
 	var_or_resource(S),
 	rdf_subject(S),
 	\+ rdf_db:rdf(S, rdf:type, rdfs:'Resource').
-rdf(S, serql:directSubClassOf, O) :- !,
-	rdf_db:rdf(S, rdfs:subClassOf, O).
-rdf(S, serql:directType, O) :- !,
-	rdf_db:rdf(S, rdf:type, O).
-rdf(S, serql:directSubPropertyOf, O) :- !,
-	rdf_db:rdf(S, rdfs:subPropertyOf, O).
 
 var_or_resource(R) :-
 	(   var(R)

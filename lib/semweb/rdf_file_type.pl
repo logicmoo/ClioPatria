@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl

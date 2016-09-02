@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -148,9 +148,9 @@ logout_user('Not logged on'-[]).
 
 %%	evaluate_query(+Request) is det.
 %
-%	HTTP handler for both SeRQL  and   SPARQL  queries. This handler
-%	deals with _interactive_  queries.   Machines  typically  access
-%	/sparql/ to submit queries and process   result compliant to the
+%	HTTP handler for SPARQL queries. This handler deals with
+%	_interactive_ queries.  Machines typically access IRI path
+%	`/sparql/` to submit queries and process result compliant to the
 %	SPARQL protocol.
 
 evaluate_query(Request) :-

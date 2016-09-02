@@ -1,4 +1,4 @@
-/*  Part of ClioPatria SeRQL and SPARQL server
+/*  Part of ClioPatria SPARQL server
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -39,10 +39,10 @@
 :- use_module(library(http/html_head)).
 :- use_module(basics).
 
-/** <module> Forms for entering SPARQL and SeRQL queries.
+/** <module> Forms for entering SPARQL queries.
 
-This module implements the forms for   entering SPARQL and SeRQL queries
-with a simple query-history mechanism for user-submitted SPARQL queries.
+This module implements the forms for entering SPARQL queries with a
+simple query-history mechanism for user-submitted SPARQL queries.
 */
 
 %%	query_form(+Options)//
@@ -258,8 +258,8 @@ js_quote_code(C) -->
 
 %%	store_query(+Type, +Name, +Query) is det.
 %
-%	Store the SPARQL/SeRQL Query under Name  in the current session.
-%	Succeeds without doing anything if there is no session.
+%	Store the SPARQL Query under Name in the current session.  Succeeds
+%	without doing anything if there is no session.
 
 store_query(_, '', _) :- !.
 store_query(Type, As, Query) :-
