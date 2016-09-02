@@ -168,7 +168,7 @@ simplify_group(Goal, Goal).
 
 bind_null(Goal0, Goal, Options) :-
 	option(bind_null(true), Options), !,
-	serql_select_bind_null(Goal0, Goal).
+	sparql_select_bind_null(Goal0, Goal).
 bind_null(Goal, Goal, _).
 
 

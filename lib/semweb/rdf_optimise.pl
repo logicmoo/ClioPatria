@@ -33,7 +33,7 @@
 	    rdf_optimise/2,		% +Query, -Optimised
 	    rdf_optimise/4,		% +Query, -Optimised, -Space, -Time
 	    rdf_complexity/3,		% :Goal, -SpaceEstimate, -TimeEstimate
-	    serql_select_bind_null/2	% +Goal, -WithBind
+	    sparql_select_bind_null/2	% +Goal, -WithBind
 	  ]).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(debug)).
@@ -952,7 +952,7 @@ TBD:	disjunctions and other control structures.
 	queries that do not bind (such as SPARQL bound(X))
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-serql_select_bind_null(Goal0, Goal) :-
+sparql_select_bind_null(Goal0, Goal) :-
 	State = bindings([]),
 	select_bind_null(Goal0, Goal1, State),
 	arg(1, State, Bindings),
