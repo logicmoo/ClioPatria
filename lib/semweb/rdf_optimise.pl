@@ -911,10 +911,6 @@ rdf_estimate_complexity(G, C) :-
 	rdf_db_goal(G, S, P, O),
 	rdf_estimate_complexity(S, P, O, C).
 
-term_expansion(In, Out) :-
-	map(In), !,
-	rdf_global_term(In, Out).
-
 
 		 /*******************************
 		 *     INSTANTIATE OPTIONAL	*
