@@ -220,4 +220,4 @@ no_flint -->
 		 *	 REGISTER WITH MENU	*
 		 *******************************/
 
-cliopatria:menu_item(150=query/sparql_editor,  'Flint SPARQL Editor').
+html:menu_item(query, 150, sparql_editor, "Flint SPARQL Editor").

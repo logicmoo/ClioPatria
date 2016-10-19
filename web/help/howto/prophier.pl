@@ -20,7 +20,7 @@ order to process the request, we
     2. emit the tree as a nested =ul= structure
 
 Finally, we can add it to the  ClioPatria   menu  by adding a clause for
-cliopatria:menu_item/2.
+html:menu_item/4.
 
 @tbd	Add style to make it look pretty.
 */
@@ -30,11 +30,11 @@ cliopatria:menu_item/2.
 :- http_handler(cliopatria(prophier), property_hierarchy, []).
 
 % add our application to the Places  menu.   300  is the location in the
-% menu (check cp_menu:menu_item/2 for the initial   menu). places is the
+% menu (check html:menu_item/4 for the initial  menu). places is the
 % popup and property_hierarchy is the identifier  of our handlers, which
 % defaults to the predicate name. See http_handler/3 for details.
 
-cliopatria:menu_item(300=places/property_hierarchy, 'Predicate tree').
+html:menu_item(places, 300, property_hierarchy, "Predicate tree").
 
 %%	property_hierarchy(+Request)
 %

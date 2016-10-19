@@ -30,7 +30,8 @@
 */
 
 :- module(cliopatria_openid,
-	  [ openid_for_local_user/2
+	  [ openid_for_local_user/2,
+	    some_openid_user/0
 	  ]).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_wrapper)).
@@ -58,6 +59,30 @@ This module customizes login and OpenID handling for ClioPatria.
 */
 
 http:location(openid, cliopatria(openid), []).
+
+
+
+/* USER OPENID PAGE */
+
+:- http_handler(cliopatria(my_openid_page), my_openid_page, []).
+
+my_openid_page(Request) :-
+	openid_user(User),
+	http_redirect(see_other, User, Request).
+
+
+openid_user(User) :-
+	logged_on(User, X),
+	X \== User,
+	uri_components(User, Components),
+	uri_data(scheme, Components, Scheme),
+	nonvar(Scheme).
+
+
+some_openid_user :-
+	openid_user(_).
+
+
 
 		 /*******************************
 		 *	CUSTOMISE OPENID	*
@@ -110,13 +135,13 @@ explain_login(ReturnTo) -->
 	},
 	html(div(class('rdfql-login'),
 		 [ p([ 'You are trying to access a page (~w) that requires authorization. '-[Path],
-		       \explain_open_id_login
+		       \explain_openid_login
 		     ])
 		 ])).
 
-explain_open_id_login -->
+explain_openid_login -->
 	{ \+ openid_current_server(_) }, !.
-explain_open_id_login -->
+explain_openid_login -->
 	html([ 'You can login either as a local user',
 	       ' or with your ', a(href('http://www.openid.net'), 'OpenID'), '.']),
 	(   { openid_current_server(*) }

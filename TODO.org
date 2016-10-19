@@ -1,0 +1,5 @@
+* What to do with skin/cp_skin:address//0?
+* \meta(author, 'Jan Wielemaker & Wouter Beek & Jacco van Ossenbruggen & Michiel Hildebrand'),
+* \meta(description, 'ClioPatria is a Prolog-based Triple Store'),
+* \meta(keywords, 'Triple Store, Linked Open Data, Semantic Web, Prolog'),
+* multilingual labels for menu items

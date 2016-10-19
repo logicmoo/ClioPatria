@@ -39,7 +39,6 @@
 :- use_module(wiki).			% Our own help-pages
 :- use_module(http_help).		% Help on HTTP server
 :- use_module(ac_predicate).		% Predicate autocompletion
-:- use_module(components(menu)).	% ClioPatria Menu
 
 /** <module> ClioPatria help system
 
@@ -86,15 +85,11 @@ cp_help(Request) :-
 	atom_concat(Location, HelpFile, StartPage),
 	http_redirect(moved, StartPage, Request).
 
-%%	cliopatria:menu_item(-Item, -Label) is nondet.
-%
-%	Extends the help popup with  links   to  the source-code and the
-%	HTTP services.
+%	Extend the top-level *Help* menu with menu items that link to the
+%	source-code and the HTTP services.
 
-:- multifile
-	cliopatria:menu_item/2.
-
-cliopatria:menu_item(100=help/wiki_help, 'Documentation').
-cliopatria:menu_item(150=help/tutorial,  'Tutorial').
-cliopatria:menu_item(200=help/cp_help,	 'Roadmap').
-cliopatria:menu_item(300=help/http_help, 'HTTP Services').
+html:menu_item(6, help, "Help").
+	html:menu_item(help, 1, wiki_help, "Documentation").
+	html:menu_item(help, 2, tutorial, "Tutorial").
+	html:menu_item(help, 3, cp_help, "Roadmap").
+	html:menu_item(help, 4, http_help, "HTTP Services").

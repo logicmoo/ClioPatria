@@ -51,7 +51,7 @@ by adding files to =|config-enabled|=.
 :- http_handler(cliopatria(admin/configuration), configuration, []).
 :- http_handler(cliopatria(admin/reconfigure),   reconfigure,	  []).
 
-cliopatria:menu_item(250=admin/configuration,  'Plugins').
+html:menu_item(admin, 250, configuration, "Plugins").
 
 %%	configuration(+Request)
 %

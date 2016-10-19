@@ -54,6 +54,8 @@
 	    current_user/1,		% ?User
 	    logged_on/1,		% -User
 	    logged_on/2,		% -User, +Default
+	    someone_logged_on/0,
+	    local_user_logged_on/0,
 	    ensure_logged_on/1,		% -User
 	    authorized/1,		% +Action
 
@@ -368,6 +370,29 @@ logged_on(User, Default) :-
 	->  User = User0
 	;   User = Default
 	).
+
+
+%%	someone_logged_on is semidet.
+%
+%	True if some user is logged on.
+
+someone_logged_on :-
+	logged_on(User, X),
+	X \== User.
+
+
+%%	local_user_logged_on is semidet.
+%
+%	True if the currently logged on user is a local user (as opposed
+%	to an OpenID accredited logon).
+
+local_user_logged_on :-
+	logged_on(User, X),
+	X \== User,
+	\+ ( uri_components(User, Components),
+	     uri_data(scheme, Components, Scheme),
+	     nonvar(Scheme)
+).
 
 
 %%	ensure_logged_on(-User)

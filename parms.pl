@@ -37,6 +37,9 @@
 :- use_module(library(http/html_write)).
 :- use_module(library(http/http_hook)).
 
+:- use_module(user/openid).
+:- use_module(user/user_db).
+
 /** <module> ClioPatria parameters
 
 This file contains the locations of file-directories and web-directories
@@ -83,6 +86,7 @@ user:file_search_path(skin,		cpacks(skin)).
 user:file_search_path(web,		cpacks(web)).
 user:file_search_path(css,		web(css)).
 user:file_search_path(icons,		web(icons)).
+user:file_search_path(img,		web(icons)).
 user:file_search_path(yui,		web('yui/2.7.0')).
 user:file_search_path(js,		web(js)).
 user:file_search_path(html,		web(html)).
@@ -215,3 +219,56 @@ http_settings:input_item(uri, Value, Name) -->
 	   'Maximum number of concurrent requests').
 :- setting(sparql:stack_size, nonneg, 1000,
 	   'Size of the global stack in mega-bytes').
+
+/* SKIN */
+
+:- setting(
+     cliopatria:subtitle,
+     string,
+     "The Quintessential Triple Store",
+     "The subtitle of the application."
+   ).
+:- setting(
+     cliopatria:title,
+     string,
+     "Quine",
+     "The title of the application."
+   ).
+
+
+
+/* DEFAULT MENU */
+
+:- multifile
+    html:menu_item/3,
+    html:menu_item/4.
+
+html:menu_item(1, places, "Places").
+	html:menu_item(places, 1, home, "Home").
+	html:menu_item(places, 2, list_graphs, "Graphs").
+	html:menu_item(places, 3, list_prefixes, "Prefixes").
+html:menu_item(2, admin, "Admin").
+	html:menu_item(admin, 1, list_users, "Users").
+	html:menu_item(admin, 2, settings, "Settings").
+	html:menu_item(admin, 3, statistics, "Statistics").
+html:menu_item(3, repository, "Repository").
+	html:menu_item(repository, 1, load_file_form, "Load local file").
+	html:menu_item(repository, 2, load_url_form, "Load from HTTP").
+	html:menu_item(repository, 3, load_library_rdf_form, "Load from library").
+	html:menu_item(repository, 4, remove_statements_form, "Remove triples").
+	html:menu_item(repository, 5, clear_repository_form, "Clear repository").
+html:menu_item(4, query, "Query").
+	html:menu_item(query, 1, yasgui_editor, "YASGUI SPARQL Editor").
+	html:menu_item(query, 2, query_form, "Simple Form").
+%html:menu_item(5, application, "Application").
+
+html:menu_item(user, 1, login_form, "Login") :-
+	\+ someone_logged_on.
+html:menu_item(user, 2, openid_userpage, "User page") :-
+	someone_logged_on.
+html:menu_item(user, 3, change_password_form, "Change password") :-
+	local_user_logged_on.
+html:menu_item(user, 4, my_openid_page, "My OpenID page") :-
+	some_openid_user.
+html:menu_item(user, 5, user_logout, "Logout") :-
+	someone_logged_on.
