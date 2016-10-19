@@ -48,8 +48,8 @@ This application provides a web-interface   for configuration management
 by adding files to =|config-enabled|=.
 */
 
-:- http_handler(cliopatria('admin/configuration'), configuration, []).
-:- http_handler(cliopatria('admin/reconfigure'),   reconfigure,	  []).
+:- http_handler(cliopatria(admin/configuration), configuration, []).
+:- http_handler(cliopatria(admin/reconfigure),   reconfigure,	  []).
 
 cliopatria:menu_item(250=admin/configuration,  'Plugins').
 
