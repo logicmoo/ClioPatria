@@ -33,6 +33,7 @@
 	  [ openid_for_local_user/2,
 	    some_openid_user/0
 	  ]).
+:- use_module(library(html/html_ext)).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_wrapper)).
 :- use_module(library(http/http_openid)).
@@ -48,8 +49,9 @@
 :- use_module(library(socket)).
 :- use_module(library(debug)).
 :- use_module(library(settings)).
-:- use_module(user_db).
 
+:- use_module(cp(skin/cliopatria)).
+:- use_module(cp(user/user_db)).
 
 /** <module> OpenID server and client access
 
@@ -65,6 +67,9 @@ http:location(openid, cliopatria(openid), []).
 /* USER OPENID PAGE */
 
 :- http_handler(cliopatria(my_openid_page), my_openid_page, []).
+
+html:menu_item(user, 4, my_openid_page, "My OpenID page") :-
+	some_openid_user.
 
 my_openid_page(Request) :-
 	openid_user(User),
@@ -207,7 +212,6 @@ trusted_openid_server(URL) -->
 		 *	   OPENID SERVER	*
 		 *******************************/
 
-:- http_handler(cliopatria(user), openid_userpage, [prefix]).
 :- http_handler(openid(server), openid_server([]), [prefix]).
 
 http_openid:openid_hook(grant(Request, Options)) :-
@@ -223,47 +227,6 @@ http_openid:openid_hook(grant(Request, Options)) :-
 	).
 
 
-%%	openid_userpage(+Request)
-%
-%	Server user page for a registered user
-
-openid_userpage(Request) :-
-	(   current_user(User)
-	->  findall(P, user_property(User, P), Props),
-	    reply_html_page(cliopatria(default),
-			    [ link([ rel('openid.server'),
-				     href(location_by_id(openid_server))
-				   ]),
-			      title('OpenID page for user ~w'-[User])
-			    ],
-			    [ h1('OpenID page for user ~w'-[User]),
-			      \user_properties(Props)
-			    ])
-	;   memberchk(path(Path), Request),
-	    existence_error(http_location, Path)
-	).
-
-
-user_properties([]) -->
-	[].
-user_properties([H|T]) -->
-	user_property(H),
-	user_properties(T).
-
-user_property(realname(Name)) --> !,
-	html(div(['Real name: ', Name])).
-user_property(connection(Login, IdleF)) --> !,
-	{ format_time(string(S), '%+', Login),
-	  Idle is round(IdleF),
-	  Hours is Idle // 3600,
-	  Min is Idle mod 3600 // 60,
-	  Sec is Idle mod 60
-	},
-	html(div(['Logged in since ~s, idle for ~d:~d:~d'-
-		  [S, Hours,Min,Sec]])).
-user_property(_) -->
-	[].
-
 
 %%	openid_for_local_user(+User, -URL) is semidet.
 %
@@ -272,28 +235,10 @@ user_property(_) -->
 openid_for_local_user(User, URL) :-
 	http_current_request(Request),
 	openid_current_host(Request, Host, Port),
-	http_location_by_id(openid_userpage, UserPages),
+	http_location_by_id(user_handler, UserPages),
 	(   Port == 80
 	->  format(atom(URL), 'http://~w~w/~w',
 		   [ Host, UserPages, User ])
 	;   format(atom(URL), 'http://~w:~w~w/~w',
 		   [ Host, Port, UserPages, User ])
 	).
-
-
-
-		 /*******************************
-		 *	       TEST		*
-		 *******************************/
-
-:- http_handler(cliopatria('user/form/login'), login_handler, [priority(10)]).
-
-login_handler(_Request) :-
-	ensure_logged_on(User),
-	user_property(User, url(URL)),
-	reply_html_page(cliopatria(default),
-			title('Login ok'),
-			[ h1('Login ok'),
-			  p(['You''re logged on with OpenID ',
-			     a(href(URL), URL)])
-			]).

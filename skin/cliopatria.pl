@@ -121,8 +121,8 @@ user:body(Context, Content) -->
 user:body(cliopatria(_), Content) -->
 	cliopatria:page_body(Content), !.
 % Overrule default style with cliopatria:page_body//2.
-user:body(cliopatria(Style), Content) -->
-	cliopatria:page_body(cliopatria(Style), Content), !.
+user:body(cliopatria(Attrs), Content) -->
+	cliopatria:page_body(cliopatria(Attrs), Content), !.
 % Default style.
 user:body(cliopatria(Attrs), Content) -->
   html(
@@ -326,9 +326,9 @@ cp_user_menu -->
   ).
 cp_user_menu -->
   form(
-    link_to_id(login_handler),
+    link_to_id(user_login),
     [class=['navbar-form','navbar-right'],id='user-menu'],
-    \submit_button(\internal_link(link_to_id(login_handler), "Login"))
+    \submit_button(\internal_link(link_to_id(user_login), "Login"))
   ).
 
 

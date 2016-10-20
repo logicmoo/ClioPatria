@@ -28,10 +28,9 @@
     the GNU General Public License.
 */
 
-:- module(cpa_admin,
-	  [ change_password_form//1
-	  ]).
-:- use_module(user(user_db)).
+:- module(cpa_admin, [reply_login/1]).
+
+:- use_module(library(html/html_ext)).
 :- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_session)).
 :- use_module(library(http/html_write)).
@@ -43,7 +42,10 @@
 :- use_module(library(lists)).
 :- use_module(library(option)).
 :- use_module(library(http_settings)).
-:- use_module(components(basics)).
+
+:- use_module(cp(components/basics)).
+:- use_module(cp(skin/cliopatria)).
+:- use_module(cp(user/user_db)).
 
 /** <module> ClioPatria administrative interface
 
@@ -54,7 +56,6 @@ This module provides HTTP services to perform administrative actions.
 	the current `action'-operations must (optionally) return
 	machine-friendly results.
 */
-
 
 :- http_handler(cliopatria('admin/listUsers'),		   list_users,		    []).
 :- http_handler(cliopatria('admin/form/createAdmin'),	   create_admin,	    []).
@@ -69,11 +70,6 @@ This module provides HTTP services to perform administrative actions.
 :- http_handler(cliopatria('admin/form/editOpenIDServer'), edit_openid_server_form, []).
 :- http_handler(cliopatria('admin/editOpenIDServer'),	   edit_openid_server,	    []).
 :- http_handler(cliopatria('admin/delOpenIDServer'),	   del_openid_server,	    []).
-:- http_handler(cliopatria('admin/form/changePassword'),   change_password_form,    []).
-:- http_handler(cliopatria('admin/changePassword'),	   change_password,	    []).
-:- http_handler(cliopatria('user/form/login'),		   login_form,		    []).
-:- http_handler(cliopatria('user/login'),		   user_login,		    []).
-:- http_handler(cliopatria('user/logout'),		   user_logout,		    []).
 :- http_handler(cliopatria('admin/settings'),		   settings,		    []).
 :- http_handler(cliopatria('admin/save_settings'),	   save_settings,	    []).
 
@@ -500,157 +496,9 @@ del_user(Request) :- !,
 	list_users(Request).
 
 
-%%	change_password_form(+Request)
-%
-%	Allow user to change the password
-
-change_password_form(_Request) :-
-	logged_on(User), !,
-	user_property(User, realname(RealName)),
-	reply_html_page(cliopatria(default),
-			title('Change password'),
-			[ h1(['Change password for ', User, ' (', RealName, ')']),
-
-			  \change_password_form(User)
-			]).
-change_password_form(_Request) :-
-	throw(error(context_error(not_logged_in), _)).
-
-
-%%	change_password_form(+UserID)//
-%
-%	HTML component that shows a form   for changing the password for
-%	UserID.
-
-change_password_form(User) -->
-	html(form([ action(location_by_id(change_password)),
-		    method('POST')
-		  ],
-		  [ table([ id('change-password-form'),
-			    class(form)
-			  ],
-			  [ \user_or_old(User),
-			    \input(pwd1,     'New Password',
-				   [type(password)]),
-			    \input(pwd2,     'Retype',
-				   [type(password)]),
-			    tr(class(buttons),
-			       td([ align(right),
-				    colspan(2)
-				  ],
-				  input([ type(submit),
-					  value('Change password')
-					])))
-			  ])
-		  ])).
-
-user_or_old(admin) --> !,
-	input(user, 'User', []).
-user_or_old(_) -->
-	input(pwd0, 'Old password', [type(password)]).
-
-
-%%	change_password(+Request)
-%
-%	HTTP handler to change the password. The user must be logged on.
-
-change_password(Request) :-
-	logged_on(Login), !,
-	http_parameters(Request,
-			[ user(User,     [ optional(true),
-					   description('User identifier-name')
-					 ]),
-			  pwd0(Password, [ optional(true),
-					   description('Current password')
-					 ]),
-			  pwd1(New),
-			  pwd2(Retype)
-			],
-			[ attribute_declarations(attribute_decl)
-			]),
-	(   Login == admin
-	->  (   current_user(User)
-	    ->	true
-	    ;	throw(error(existence_error(user, User), _))
-	    )
-	;   Login = User,
-	    validate_password(User, Password)
-	),
-	(   New == Retype
-	->  true
-	;   throw(password_mismatch)
-	),
-	password_hash(New, Hash),
-	set_user_property(User, password(Hash)),
-	reply_html_page(cliopatria(default),
-			'Password changed',
-			[ h1(align(center), 'Password changed'),
-			  p([ 'Your password has been changed successfully' ])
-			]).
-change_password(_Request) :-
-	throw(error(context_error(not_logged_in), _)).
-
-
-
 		 /*******************************
 		 *	       LOGIN		*
 		 *******************************/
-
-%%	login_form(+Request)
-%
-%	HTTP handler that presents a form to login.
-
-login_form(_Request) :-
-	reply_html_page(cliopatria(default),
-			'Login',
-			[ h1(align(center), 'Login'),
-			  form([ action(location_by_id(user_login)),
-				 method('POST')
-			       ],
-			       table([ tr([ th(align(right), 'User:'),
-					    td(input([ name(user),
-						       size(40)
-						     ]))
-					  ]),
-				       tr([ th(align(right), 'Password:'),
-					    td(input([ type(password),
-						       name(password),
-						       size(40)
-						     ]))
-					  ]),
-				       tr([ td([ align(right), colspan(2) ],
-					       input([ type(submit),
-						       value('Login')
-						     ]))
-					  ])
-				     ])
-			      )
-			]).
-
-%%	user_login(+Request)
-%
-%	Handle  =user=  and  =password=.  If    there   is  a  parameter
-%	=return_to= or =|openid.return_to|=, reply using   a redirect to
-%	the given URL. Otherwise display a welcome page.
-
-user_login(Request) :- !,
-	http_parameters(Request,
-			[ user(User),
-			  password(Password),
-			  'openid.return_to'(ReturnTo, [optional(true)]),
-			  'return_to'(ReturnTo, [optional(true)])
-			],
-			[ attribute_declarations(attribute_decl)
-			]),
-	(   var(ReturnTo)
-	->  Extra = []
-	;   Extra = [ return_to(ReturnTo) ]
-	),
-	reply_login([ user(User),
-		      password(Password)
-		    | Extra
-		    ]).
-
 
 reply_login(Options) :-
 	option(user(User), Options),
@@ -660,32 +508,14 @@ reply_login(Options) :-
 	(   option(return_to(ReturnTo), Options)
 	->  throw(http_reply(moved_temporary(ReturnTo)))
 	;   reply_html_page(cliopatria(default),
-			    title('Login ok'),
-			    h1(align(center), ['Welcome ', User]))
+			    \cp_title(["Login OK"]),
+			    h1(align(center), ["Welcome ",\quote(User),"!"]))
 	).
 reply_login(_) :-
 	reply_html_page(cliopatria(default),
 			title('Login failed'),
 			[ h1('Login failed'),
 			  p(['Password incorrect'])
-			]).
-
-%%	user_logout(+Request)
-%
-%	Logout the current user
-
-user_logout(_Request) :-
-	logged_on(User), !,
-	logout(User),
-	reply_html_page(cliopatria(default),
-			title('Logout'),
-			h1(align(center), ['Logged out ', User])).
-user_logout(_Request) :-
-	reply_html_page(cliopatria(default),
-			title('Logout'),
-			[ h1(align(center), ['Not logged on']),
-			  p(['Possibly you are logged out because the session ',
-			     'has timed out.'])
 			]).
 
 %%	attribute_decl(+Param, -DeclObtions) is semidet.

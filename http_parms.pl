@@ -75,12 +75,38 @@ http:http_param(
   setting(Mod:max_page_size, MaxPageSize),
   setting(Mod:default_page_size, DefPageSize).
 http:http_param(
+  Mod,
+  password,
+  [
+    description("The current password."),
+    length > 5
+  | T]
+) :-
+  (   memberchk(Mod, [change_password,user_login])
+  ->  T = [optional(true)]
+  ;   T = []
+  ).
+http:http_param(
   _,
   predicate,
   [
     description("Use a specific predicate term as a filter on results."),
     optional(true),
     q_iri
+  ]
+).
+http:http_param(
+  _,
+  'openid.return_to',
+  [optional(true)]
+).
+http:http_param(
+  _,
+  return_to,
+  [
+    atom,
+    description("URI to return to"),
+    optional(true)
   ]
 ).
 http:http_param(
@@ -92,6 +118,18 @@ http:http_param(
     q_iri
   ]
 ).
+http:http_param(
+  Mod,
+  user,
+  [
+    description("User identifier-name."),
+    length > 1
+  | T]
+) :-
+  (   memberchk(Mod, [change_password,user_login])
+  ->  T = [optional(true)]
+  ;   T = []
+  ).
 
 
 

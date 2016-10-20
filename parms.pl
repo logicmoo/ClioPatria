@@ -37,9 +37,6 @@
 :- use_module(library(http/html_write)).
 :- use_module(library(http/http_hook)).
 
-:- use_module(user/openid).
-:- use_module(user/user_db).
-
 /** <module> ClioPatria parameters
 
 This file contains the locations of file-directories and web-directories
@@ -266,14 +263,3 @@ html:menu_item(4, query, "Query").
 	html:menu_item(query, 1, yasgui_editor, "YASGUI SPARQL Editor").
 	html:menu_item(query, 2, query_form, "Simple Form").
 %html:menu_item(5, application, "Application").
-
-html:menu_item(user, 1, login_form, "Login") :-
-	\+ someone_logged_on.
-html:menu_item(user, 2, openid_userpage, "User page") :-
-	someone_logged_on.
-html:menu_item(user, 3, change_password_form, "Change password") :-
-	local_user_logged_on.
-html:menu_item(user, 4, my_openid_page, "My OpenID page") :-
-	some_openid_user.
-html:menu_item(user, 5, user_logout, "Logout") :-
-	someone_logged_on.
