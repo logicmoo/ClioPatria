@@ -71,6 +71,9 @@ user:file_search_path(web,		web).
 % Configuration
 user:file_search_path(config_https,	cp_application('config-enabled/https')).
 
+% Abbreviation
+user:file_search_path(cp,	        cliopatria('.')).
+
 % Package merge
 user:file_search_path(cpacks,	        cliopatria('.')).
 
@@ -102,6 +105,8 @@ user:file_search_path(yasr,		web(yasr/dist)).
 		 *******************************/
 
 http:location(cliopatria,  root(.),	         [priority(-1)]).
+http:location(cp,  root(.),	         [priority(-1)]).
+http:location(blog, cliopatria(blog), []).
 http:location(web,	   cliopatria(web),      []).
 http:location(sesame,	   cliopatria(servlets), []).
 http:location(sparql,	   cliopatria(sparql),   []).

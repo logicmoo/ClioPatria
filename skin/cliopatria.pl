@@ -105,12 +105,18 @@ ClioPatria skin.
    cp_page(+, +, +, html).
 
 :- multifile
+	cp:head//2,
+	cp:body//2,
 	user:head//2,
 	user:body//2.
 
+user:head(Context, Content) -->
+  cp:head(Context, Content), !.
 user:head(cliopatria(_), Content) --> !,
   html(head([\cp_head_generics|Content])).
 
+user:body(Context, Content) -->
+  cp:body(Context, Content), !.
 % Overrule default style with cliopatria:page_body//1.
 user:body(cliopatria(_), Content) -->
 	cliopatria:page_body(Content), !.
