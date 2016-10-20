@@ -52,6 +52,7 @@
 	    login/1,			% +User
 	    logout/1,			% +User
 	    current_user/1,		% ?User
+	    has_current_user/0,
 	    logged_on/1,		% -User
 	    logged_on/2,		% -User, +Default
 	    someone_logged_on/0,
@@ -252,6 +253,13 @@ openid_server_property(Server, Property) :-
 
 current_user(User) :-
 	user(User, _).
+
+
+%%	has_current_user is semidet.
+
+has_current_user :-
+	current_user(_).
+
 
 %%	user_property(?User, ?Property) is nondet.
 %%	user_property(+User, +Property) is semidet.
