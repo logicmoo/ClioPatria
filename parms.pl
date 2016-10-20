@@ -87,14 +87,14 @@ user:file_search_path(web,		cpacks(web)).
 user:file_search_path(css,		web(css)).
 user:file_search_path(icons,		web(icons)).
 user:file_search_path(img,		web(icons)).
-user:file_search_path(yui,		web('yui/2.7.0')).
+user:file_search_path(yui,		web(yui/'2.7.0')).
 user:file_search_path(js,		web(js)).
 user:file_search_path(html,		web(html)).
 user:file_search_path(help,		web(help)).
 user:file_search_path(tutorial,		web(tutorial)).
-user:file_search_path(flint,		web('FlintSparqlEditor/sparql')).
-user:file_search_path(yasqe,		web('yasqe/dist')).
-user:file_search_path(yasr,		web('yasr/dist')).
+user:file_search_path(flint,		web('FlintSparqlEditor'/sparql)).
+user:file_search_path(yasqe,		web(yasqe/dist)).
+user:file_search_path(yasr,		web(yasr/dist)).
 
 
 		 /*******************************
