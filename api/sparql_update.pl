@@ -18,7 +18,13 @@
 :- use_module(cp(http_parms)).
 :- use_module(cp(rdfql/sparql_reply)).
 
-:- http_handler(cliopatria(sparql/update), sparql_update, [spawn(sparql_query)]).
+:- http_handler(
+     cliopatria(sparql/update),
+     sparql_update_handler,
+     [spawn(sparql_update_handler)]
+   ).
+
+html:menu_item(query, 3, sparql_update_handler, "SPARQL Update").
 
 :- multifile
     http_param/1,

@@ -218,9 +218,15 @@ http_settings:input_item(uri, Value, Name) -->
 		 *******************************/
 
 :- setting(
-     entailment,
+     sparql:backend,
+     oneof([hdt,trp]),
+     hdt,
+     "The backend that is used for answering SPARQL Query requests."
+   ).
+:- setting(
+     sparql:entailment,
      oneof([none,rdf,rdfs,rdfs_lite,skosxml]),
-     rdf,
+     none,
      "The default entailment regime used for SPARQL queries."
    ).
 :- setting(sparql:max_clients, nonneg, 100,
@@ -265,6 +271,4 @@ html:menu_item(3, repository, "Repository").
 	html:menu_item(repository, 4, remove_statements_form, "Remove triples").
 	html:menu_item(repository, 5, clear_repository_form, "Clear repository").
 html:menu_item(4, query, "Query").
-	html:menu_item(query, 1, yasgui_editor, "YASGUI SPARQL Editor").
-	html:menu_item(query, 2, query_form, "Simple Form").
 %html:menu_item(5, application, "Application").

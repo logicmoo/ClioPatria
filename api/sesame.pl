@@ -64,11 +64,11 @@
 :- http_handler(sesame('login'),	      http_login,	    []).
 :- http_handler(sesame('logout'),	      http_logout,	    []).
 :- http_handler(sesame('evaluateQuery'),      evaluate_query,
-		[spawn(sparql_query)]).
+		[spawn(sparql_query_handler)]).
 :- http_handler(sesame('evaluateGraphQuery'), evaluate_graph_query,
-		[spawn(sparql_query)]).
+		[spawn(sparql_query_handler)]).
 :- http_handler(sesame('evaluateTableQuery'), evaluate_table_query,
-		[spawn(sparql_query)]).
+		[spawn(sparql_query_handler)]).
 :- http_handler(sesame('extractRDF'),	      extract_rdf,	    []).
 :- http_handler(sesame('listRepositories'),   list_repositories,    []).
 :- http_handler(sesame('clearRepository'),    clear_repository,	    []).
@@ -997,13 +997,6 @@ attribute_decl(resourceFormat,
 		       ]),
 		 description('How to format URIs in the table')
 	       ]).
-attribute_decl(entailment,		% cache?
-	       [ default(Default),
-		 oneof(Es),
-		 description('Reasoning performed')
-	       ]) :-
-	setting(cliopatria:default_entailment, Default),
-	findall(E, cliopatria:entailment(E, _), Es).
 attribute_decl(dataFormat,
 	       [ optional(true),
 		 oneof([rdfxml, ntriples, turtle]),

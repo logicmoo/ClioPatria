@@ -113,6 +113,7 @@ user:file_search_path(library, cliopatria(lib)).
 		applications(admin),
 		applications(user),
 		applications(browse),
+    applications(graphs),
 		applications(sparql_editor),
 
 		library(conf_d),

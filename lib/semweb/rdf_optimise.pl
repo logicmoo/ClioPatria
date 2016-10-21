@@ -39,6 +39,7 @@
 :- use_module(library(debug)).
 :- use_module(library(lists)).
 :- use_module(library(pairs)).
+:- use_module(library(q/q_optimise)).
 :- use_module(library(ordsets)).
 :- use_module(library(ugraphs)).
 
@@ -703,7 +704,7 @@ complexity(Goal, Goal, State, Sz, Sz, C0, C) :-
 	instantiate(Var, _, b, State),
 	C is C0 + 0.2.
 complexity(Goal, Goal, State, Sz0, Sz, C0, C) :-
-	rdf_db_goal(Goal, S, P, O), !,
+	rdf_db_goal(Goal, _, S, P, O, _), !,
 	instantiate(S, SI, b, State),
 	instantiate(P, PI, b, State),
 	instantiate_obj(O, OI, b, State),
@@ -835,13 +836,13 @@ complexity0(+(b), -, -, _, _, 1, 1, B) :- !,
 	->  B = 0
 	;   B is Total/Subjs
 	).
-complexity0(_,_,+(like(Pat)),_, G, Factor, Factor, B) :- !,
-	rdf_estimate_complexity(G, B0),
+complexity0(_,_,+(like(Pat)),_, Goal, Factor, Factor, B) :- !,
+	rdf_estimate_complexity(Goal, B0),
 	pattern_filter(Pat, Factor0),
 	Factor is max(1, min(B0, Factor0)/10),
 	B is B0/Factor.
-complexity0(_,_,_, _, G, 1, 1, B) :-
-	rdf_estimate_complexity(G, B).
+complexity0(_,_,_, _, Goal, 1, 1, B) :-
+	rdf_estimate_complexity(Goal, B).
 
 :- if(rdf_statistics(subjects(_))).
 subject_count(Count) :-				% RDF-DB 2.x
@@ -864,7 +865,7 @@ obj_branch_factor(rdf_has(_,_,_),        X, rdfs_object_branch_factor(X)).
 obj_branch_factor(rdf_reachable(_,_,_),  X, rdfs_object_branch_factor(X)).
 
 
-%%	rdf_db_goal(+Goal, -Subject, -Predicate, -Object)
+%%	rdf_db_goal(+Goal, -M, -S, -P, -O, ?G) is det.
 %
 %	True if Goal is a pure (logical)   predicate on the RDF database
 %	involving the given  Subject,  Predicate   and  Object.  Defined
@@ -874,12 +875,12 @@ obj_branch_factor(rdf_reachable(_,_,_),  X, rdfs_object_branch_factor(X)).
 %	@tbd	Allow specifying different costs and branching factors
 
 :- multifile
-	rdf_db_goal/4.
+	rdf_db_goal/6.
 
-rdf_db_goal(rdf(S,P,O),			S,P,O).
-rdf_db_goal(rdf_has(S,P,O),		S,P,O).
-rdf_db_goal(rdf_reachable(S,P,O),	S,P,O).
-rdf_db_goal(rdf(S,P,O, _DB),		S,P,O). % TBD: less hits
+rdf_db_goal(q(M,S,P,O), M, S, P, O, _).
+rdf_db_goal(rdf_has(S,P,O), _, S, P, O, _) :- gtrace.
+rdf_db_goal(rdf_reachable(S,P,O),	_, S, P, O, _) :- gtrace.
+rdf_db_goal(q(M,S,P,O,G), M, S, P, O, G). % TBD: less hits
 
 %%	pattern_filter(+Like, -Factor)
 %
@@ -907,9 +908,9 @@ pattern_factor([_|T], F0, F) :-
 %	In addition, rdf_reachable/3 introduces its own complexity which
 %	must be estimate using the branching factor of the relation.
 
-rdf_estimate_complexity(G, C) :-
-	rdf_db_goal(G, S, P, O),
-	rdf_estimate_complexity(S, P, O, C).
+rdf_estimate_complexity(Goal, C) :-
+	rdf_db_goal(Goal, M, S, P, O, G),
+	q_estimate_complexity(M, S, P, O, G, C).
 
 
 		 /*******************************

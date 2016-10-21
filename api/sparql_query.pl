@@ -42,7 +42,13 @@ http_param(entailment).
 http_param('named-graph-uri').
 http_param(query).
 
-:- http_handler(q(sparql), sparql_query_handler, [spawn(sparql_query)]).
+:- http_handler(
+     cliopatria(sparql),
+     sparql_query_handler,
+     [spawn(sparql_query_handler)]
+   ).
+
+html:menu_item(query, 1, sparql_query_handler, "SPARQL Query").
 
 
 
@@ -99,8 +105,10 @@ sparql_query_handler(Req) :-
 
 
 sparql_query_method(Req, Method, MTs) :-
-  memberchk(content_type(A), Req),
-  http_parse_header('content-type', A, ContentType),
+  (   memberchk(content_type(A), Req)
+  ->  http_parse_header('content-type', A, ContentType)
+  ;   true
+  ),
   rest_media_type(
     Req,
     Method,
@@ -159,6 +167,6 @@ sparql_query_media_type_params(MT, Req) :-
       'named-graph-uri'(NamedGs),
       query(Query)
     ],
-    [attribute_declarations(http_param(sparql_query_endpoint))]
+    [attribute_declarations(http_param(sparql_query))]
   ),
   sparql_media_type(MT, Query, Entailment, DefaultGs, NamedGs).

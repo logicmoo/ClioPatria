@@ -107,10 +107,8 @@ resource_menu -->
 		    ])).
 
 entailment -->
-	{ findall(E, cliopatria:entailment(E, _), Es)
-	},
 	html(select(name(entailment),
-		    \entailments(Es))).
+		    \entailments([none,rdf,rdfs,rdfs_lite,skosxl]))).
 
 entailments([]) -->
 	[].

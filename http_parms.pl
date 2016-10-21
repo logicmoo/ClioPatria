@@ -40,6 +40,25 @@ http:http_param(
   ;   T = []
   ).
 http:http_param(
+  _,
+  'default-graph-uri',
+  [
+    description("The default graph(s) to query (not supported)."),
+    list(atom),
+    optional(true)
+  ]
+).
+http:http_param(
+  _,
+  entailment,
+  [
+    default(none),
+    description("The entailment regime that is used."),
+    oneof([none,rdf,rdfs,rdfs_lite,skosxl]),
+    optional(true)
+  ]
+).
+http:http_param(
   Mod,
   graph,
   [
@@ -54,6 +73,15 @@ http:http_param(
   ->  T = [default(G)]
   ;   T = [optional(true)]
   ).
+http:http_param(
+  _,
+  'named-graph-uri',
+  [
+    description("Additional named graph(s) to query (not supported)."),
+    list(atom),
+    optional(true)
+  ]
+).
 http:http_param(
   _,
   object,
@@ -127,6 +155,14 @@ http:http_param(
 ).
 http:http_param(
   _,
+  query,
+  [
+    atom,
+    description("A serialized query.")
+  ]
+).
+http:http_param(
+  _,
   read,
   [
     boolean,
@@ -172,6 +208,22 @@ http:http_param(
   ->  T = [optional(true)]
   ;   T = []
   ).
+http:http_param(
+  _,
+  'using-graph-uri',
+  [
+    description("The default graph(s) to update (not supported)."),
+    list(atom)
+  ]
+).
+http:http_param(
+  _,
+  'using-named-graph-uri',
+  [
+    description("Additional named graph(s) to update (not supported)."),
+    list(atom)
+  ]
+).
 http:http_param(
   _,
   write,

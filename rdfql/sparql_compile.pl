@@ -43,6 +43,7 @@
 */
 
 :- use_module(library(apply)).
+:- use_module(library(debug)).
 :- use_module(library(assoc)).
 :- use_module(library(error)).
 :- use_module(library(option)).
@@ -75,16 +76,43 @@ sparql_compile(
   ->  true
   ;   setting(sparql:backend, M)
   ),
-  sparql_parse(M, Query, Parsed, Options),
-  optimise(Parsed, Optimised, Options),
+  
+  sparql_parse(Query, Parsed, Options),
+  debug(sparql(parse), "PARSED:~n~w~n", [Parsed]),
+  
+  q_rewrite(M, Parsed, Rewritten),
+  debug(sparql(rewrite), "REWRITE:~n~w~n", [Rewritten]),
+  
+  sparql_optimise(Rewritten, Optimised, Options),
+  debug(sparql(optimise), "OPTIMISED:~n~w~n", [Optimised]),
+  
   (   option(entailment(Entailment), Options)
   ->  true
-  ;   setting(entailment, Entailment)
+  ;   setting(sparql:entailment, Entailment)
   ),
   option(type(Type), Options, _),
   option(ordered(Order), Options, _),
   option(distinct(Distinct), Options, _),
   prepare(Parsed, Type, Order, Distinct, ReplyTemplate).
+
+
+q_rewrite(
+  M,
+  select(Projections,Datasets,Query0,Solutions),
+  select(Projections,Datasets,Query,Solutions)
+) :-
+  q_rewrite_query(M, Query0, Query).
+
+q_rewrite_query(_, VAR, VAR) :-
+  var(VAR), !.
+q_rewrite_query(_, A, A) :-
+  atomic(A), !.
+q_rewrite_query(M, rdf(S,P,O), q(M,S,P,O)) :- !.
+q_rewrite_query(M, rdf(S,P,O,G), q(M,S,P,O,G)) :- !.
+q_rewrite_query(M, Comp0, Comp) :-
+  Comp0 =.. [Pred|Args0],
+  maplist(q_rewrite_query(M), Args0, Args),
+  Comp =.. [Pred|Args].
 
 
 prepare(select(Vars,_,_,S), select(Names), O, D, Reply) :- !,
