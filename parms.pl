@@ -217,6 +217,12 @@ http_settings:input_item(uri, Value, Name) -->
 		 *	  QUERY-SETTINGS	*
 		 *******************************/
 
+:- setting(
+     entailment,
+     oneof([none,rdf,rdfs,rdfs_lite,skosxml]),
+     rdf,
+     "The default entailment regime used for SPARQL queries."
+   ).
 :- setting(sparql:max_clients, nonneg, 100,
 	   'Maximum number of concurrent requests').
 :- setting(sparql:stack_size, nonneg, 1000,

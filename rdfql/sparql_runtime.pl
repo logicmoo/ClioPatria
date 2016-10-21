@@ -49,10 +49,9 @@
 :- use_module(library(ordsets)).
 :- use_module(library(uri)).
 :- use_module(library(dcg/basics)).
-:- if(exists_source(library(uuid))).
 :- use_module(library(uuid)).
-:- endif.
-:- use_module(rdfql(sparql)).
+
+:- use_module(cp(rdfql/sparql_run), []).
 
 :- discontiguous
 	term_expansion/2.
@@ -64,6 +63,9 @@
 	sparql_group(0, +, +),
 	sparql_subquery(+, 0, +),
 	sparql_update(:).
+
+:- multifile
+	sparql:function/2.			% user-defined functions
 
 /** <module> SPARQL runtime support
 
@@ -1596,7 +1598,7 @@ peval(Resource, Resource, true) :-
 sparql_subquery(Proj, Query, Solutions) :-
 	vars_in_bindings(Proj, Vars),
 	Reply =.. [row|Vars],
-	sparql:select_results(Solutions, Reply, Query),
+	sparql_run:select_results(Solutions, Reply, Query),
 	debug(sparql(subquery), 'SubQuery result: ~q', [Proj]),
 	unify_projection(Proj).
 

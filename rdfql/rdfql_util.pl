@@ -31,10 +31,9 @@
 :- module(rdfql_util,
 	  [ select_results/6,		% +Distinct, +Offset, +Limit,
 					% :SortBy, -Result, :Goal
-	    select_results/9,		% +Distinct, +Group, +Having, +Agg,
+	    select_results/9		% +Distinct, +Group, +Having, +Agg,
 					% +Offset, +Limit,
 					% :SortBy, -Result, :Goal
-	    entailment_module/2		% +Entailment, -Module
 	  ]).
 :- use_module(library(nb_set)).
 :- use_module(library(semweb/rdf_db)).
@@ -51,7 +50,7 @@
 
 %%	select_results(+Distinct, +Offset, +Limit, +SortBy, -Result, :Goal)
 %
-%	Calls select_results/8 using Group=[] and Having=true.
+%	Calls select_results/9 using Group=[] and Having=true.
 
 select_results(Distinct, Offset, Limit, SortBy, Result, Goal) :-
 	select_results(Distinct, [], true, [],
@@ -505,21 +504,3 @@ is_null(X) :-
 	->  true
 	;   X == '$null$'
 	).
-
-		 /*******************************
-		 *	     ENTAILMENT		*
-		 *******************************/
-
-%%	entailment_module(+Entailment, -Module)
-%
-%	Find the Prolog module implementing the   entailment rules for a
-%	semantic web language.
-
-entailment_module(Entailment, Module) :-
-	cliopatria:entailment(Entailment, Module), !.
-entailment_module(Entailment, _) :-
-	throw(error(existence_error(entailment, Entailment), _)).
-
-:- multifile
-	cliopatria:entailment/2.
-

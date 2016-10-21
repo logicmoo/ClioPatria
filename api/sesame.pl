@@ -31,11 +31,7 @@
 :- module(api_sesame,
 	  [ api_action/4		% +Request, +Goal, +Format, +Message
 	  ]).
-:- use_module(rdfql(sparql)).
-:- use_module(rdfql(rdf_io)).
-:- use_module(rdfql(rdf_html)).
 :- use_module(library(http/http_parameters)).
-:- use_module(user(user_db)).
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf_db)).
 :- use_module(library(semweb/rdf_http_plugin)).
@@ -53,9 +49,15 @@
 :- use_module(library(option)).
 :- use_module(library(apply)).
 :- use_module(library(settings)).
-:- use_module(components(query)).
-:- use_module(components(basics)).
-:- use_module(components(messages)).
+
+:- use_module(cp(components/query)).
+:- use_module(cp(components/basics)).
+:- use_module(cp(components/messages)).
+:- use_module(cp(rdfql/rdf_io)).
+:- use_module(cp(rdfql/rdf_html)).
+:- use_module(cp(rdfql/sparql_compile)).
+:- use_module(cp(rdfql/sparql_run)).
+:- use_module(cp(user/user_db)).
 
 :- meta_predicate(api_action2(+,0,+,+)).
 

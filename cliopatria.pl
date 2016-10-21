@@ -105,14 +105,15 @@ user:file_search_path(library, cliopatria(lib)).
 
 		api(sesame),
 		api(journal),			% export journal information
-		api(sparql),
+		api(sparql_query),
+		api(sparql_update),
 		api(export),
 		api(void),
 
 		applications(admin),
 		applications(user),
 		applications(browse),
-		applications(yasgui),
+		applications(sparql_editor),
 
 		library(conf_d),
 		user:library(cpack/cpack)

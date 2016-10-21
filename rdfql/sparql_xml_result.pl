@@ -1,3 +1,10 @@
+:- module(
+  sparql_xml_result,
+	[
+    sparql_write_xml_result/3	% +Stream, +Result
+	]
+).
+
 /*  $Id$
 
     Part of SWI-Prolog
@@ -30,13 +37,10 @@
     the GNU General Public License.
 */
 
-:- module(sparql_xml_result,
-	  [ sparql_write_xml_result/3	% +Stream, +Result
-	  ]).
-:- use_module(library(sgml)).
 :- use_module(library(assoc)).
 :- use_module(library(option)).
-:- use_module(library(semweb/rdf_db), [rdf_is_bnode/1, rdf_equal/2]).
+:- use_module(library(semweb/rdf11)).
+:- use_module(library(sgml)).
 
 ns(sparql, 'http://www.w3.org/2005/sparql-results#').
 
