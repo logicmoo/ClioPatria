@@ -94,12 +94,14 @@ user:file_search_path(library, cliopatria(lib)).
 		library(http/http_dispatch),
 		library(http/thread_httpd),
 
+		user(change_password),
 		user(openid),
 		user(preferences),
 		user(user_db),
 		user(user_login),
 		user(user_logout),
 		user(user_page),
+		user(users),
 
 		api(sesame),
 		api(journal),			% export journal information
@@ -108,7 +110,6 @@ user:file_search_path(library, cliopatria(lib)).
 		api(void),
 
 		applications(admin),
-		applications(admin/change_password),
 		applications(user),
 		applications(browse),
 		applications(yasgui),

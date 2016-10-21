@@ -1,6 +1,6 @@
 :- module(change_password, []).
 
-/** <module> Quine admin: Change password
+/** <module> Quine: Change user password
 
 @author Jan Wielemaker
 @author Wouter Beek
@@ -19,7 +19,7 @@
 :- use_module(cp(skin/cliopatria)).
 :- use_module(cp(user/user_db)).
 
-:- http_handler(cp(admin/changePassword), change_password_handler, []).
+:- http_handler(cp(user/change_password), change_password_handler, []).
 
 html:menu_item(user, 3, change_password_handler, "Change password") :-
   local_user_logged_on.

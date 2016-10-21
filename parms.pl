@@ -250,7 +250,6 @@ html:menu_item(1, places, "Places").
 	html:menu_item(places, 2, list_graphs, "Graphs").
 	html:menu_item(places, 3, list_prefixes, "Prefixes").
 html:menu_item(2, admin, "Admin").
-	html:menu_item(admin, 1, list_users, "Users").
 	html:menu_item(admin, 2, settings, "Settings").
 	html:menu_item(admin, 3, statistics, "Statistics").
 html:menu_item(3, repository, "Repository").

@@ -45,7 +45,7 @@ user_login(Req) :-
   rest_method(Req, [get,post], login_method).
 
 
-login_method(Req, post, _) :-
+login_method(Req, post, MTs) :-
   http_parameters(
     Req,
     [
@@ -58,7 +58,7 @@ login_method(Req, post, _) :-
   ),
   maplist(ground, [Password,User]), !,
   (var(ReturnTo) -> Extra = [] ;  Extra = [return_to(ReturnTo)]),
-  reply_login([user(User),password(Password)|Extra]).
+  reply_login([user(User),password(Password)|Extra], MTs).
 login_method(Req, Method, MTs) :-
   memberchk(Method, [get,post]),
   rest_media_type(Req, get, MTs, login_media_type).

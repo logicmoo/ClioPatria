@@ -19,6 +19,15 @@
     http:http_param/3.
 
 http:http_param(
+  _,
+  admin,
+  [
+    boolean,
+    default(false),
+    description("Provide administrative rights.")
+  ]
+).
+http:http_param(
   Mod,
   dataset,
   [
@@ -88,6 +97,22 @@ http:http_param(
   ).
 http:http_param(
   _,
+  pwd1,
+  [
+    length > 5,
+    description("The first entry of a new password.")
+  ]
+).
+http:http_param(
+  _,
+  pwd2,
+  [
+    description("The second entry of a new password."),
+    length > 5
+  ]
+).
+http:http_param(
+  _,
   predicate,
   [
     description("Use a specific predicate term as a filter on results."),
@@ -99,6 +124,23 @@ http:http_param(
   _,
   'openid.return_to',
   [optional(true)]
+).
+http:http_param(
+  _,
+  read,
+  [
+    boolean,
+    default(false),
+    description("Provide read-only access to the RDF store.")
+  ]
+).
+http:http_param(
+  _,
+  realname,
+  [
+    atom,
+    description("Comment on user identifier-name.")
+  ]
 ).
 http:http_param(
   _,
@@ -130,6 +172,15 @@ http:http_param(
   ->  T = [optional(true)]
   ;   T = []
   ).
+http:http_param(
+  _,
+  write,
+  [
+    boolean,
+    default(false),
+    description("Obtain write access to the RDF store.")
+  ]
+).
 
 
 

@@ -28,7 +28,13 @@
     the GNU General Public License.
 */
 
-:- module(cpa_admin, [reply_login/1]).
+:- module(
+  cpa_admin,
+  [
+    allow//3,     % +Read, +Write, +Admin
+    reply_login/2 % +Opts, +MTs
+  ]
+).
 
 :- use_module(library(html/html_ext)).
 :- use_module(library(http/http_parameters)).
@@ -46,6 +52,7 @@
 :- use_module(cp(components/basics)).
 :- use_module(cp(skin/cliopatria)).
 :- use_module(cp(user/user_db)).
+:- use_module(cp(user/users)).
 
 /** <module> ClioPatria administrative interface
 
@@ -57,7 +64,6 @@ This module provides HTTP services to perform administrative actions.
 	machine-friendly results.
 */
 
-:- http_handler(cliopatria('admin/listUsers'),		   list_users,		    []).
 :- http_handler(cliopatria('admin/form/createAdmin'),	   create_admin,	    []).
 :- http_handler(cliopatria('admin/form/addUser'),	   add_user_form,	    []).
 :- http_handler(cliopatria('admin/form/addOpenIDServer'),  add_openid_server_form,  []).
@@ -72,92 +78,6 @@ This module provides HTTP services to perform administrative actions.
 :- http_handler(cliopatria('admin/delOpenIDServer'),	   del_openid_server,	    []).
 :- http_handler(cliopatria('admin/settings'),		   settings,		    []).
 :- http_handler(cliopatria('admin/save_settings'),	   save_settings,	    []).
-
-%%	list_users(+Request)
-%
-%	HTTP Handler listing registered users.
-
-list_users(_Request) :-
-	authorized(admin(list_users)),
-	if_allowed(admin(user(edit)),   [edit(true)], UserOptions),
-	if_allowed(admin(openid(edit)), [edit(true)], OpenIDOptions),
-	reply_html_page(cliopatria(default),
-			title('Users'),
-			[ h1('Users'),
-			  \user_table(UserOptions),
-			  p(\action(location_by_id(add_user_form), 'Add user')),
-			  h1('OpenID servers'),
-			  \openid_server_table(OpenIDOptions),
-			  p(\action(location_by_id(add_openid_server_form), 'Add OpenID server'))
-			]).
-
-if_allowed(Token, Options, Options) :-
-	logged_on(User, anonymous),
-	catch(check_permission(User, Token), _, fail), !.
-if_allowed(_, _, []).
-
-%%	user_table(+Options)//
-%
-%	HTML component generating a table of registered users.
-
-user_table(Options) -->
-	{ setof(U, current_user(U), Users) },
-	cp_table(
-	  \cp_table_header(["UserID","Real name","On since","Idle"]),
-	  \list_users(Users, Options)
-	).
-
-list_users([], _) -->
-	[].
-list_users([User|T], Options) -->
-	{ user_property(User, realname(Name)),
-	  findall(Idle-Login,
-		  user_property(User, connection(Login, Idle)),
-		  Pairs0),
-	  keysort(Pairs0, Pairs),
-	  (   Pairs == []
-	  ->  OnLine = (-)
-	  ;   length(Pairs, N),
-	      Pairs = [Idle-Login|_],
-	      OnLine = online(Login, Idle, N)
-	  )
-	},
-	html(tr([ td(User),
-		  td(Name),
-		  td(\on_since(OnLine)),
-		  td(\idle(OnLine)),
-		  \edit_user_button(User, Options)
-		])),
-	list_users(T, Options).
-
-edit_user_button(User, Options) -->
-	{ option(edit(true), Options) }, !,
-	html(td(a(href(location_by_id(edit_user_form)+'?user='+encode(User)), 'Edit'))).
-edit_user_button(_, _) -->
-	[].
-
-on_since(online(Login, _Idle, _Connections)) --> !,
-	{ format_time(string(Date), '%+', Login)
-	},
-	html(Date).
-on_since(_) -->
-	html(-).
-
-idle(online(_Login, Idle, _Connections)) -->
-	{ mmss_duration(Idle, String)
-	},
-	html(String).
-idle(_) -->
-	html(-).
-
-
-mmss_duration(Time, String) :-		% Time in seconds
-	Secs is round(Time),
-	Hour is Secs // 3600,
-	Min  is (Secs // 60) mod 60,
-	Sec  is Secs mod 60,
-	format(string(String), '~`0t~d~2|:~`0t~d~5|:~`0t~d~8|', [Hour, Min, Sec]).
-
 
 
 		 /*******************************
@@ -293,8 +213,8 @@ add_user(Request) :-
 		     [ realname('Define rights for not-logged in users'),
 		       allow([read(_,_)])
 		     ]),
-	    reply_login([user(User), password(Password)])
-	;   list_users(Request)
+	    reply_login([user(User), password(Password)], [text/html])
+	;   users_handler(Request)
 	).
 
 %%	self_register(Request)
@@ -328,7 +248,7 @@ self_register(Request) :-
 	password_hash(Password, Hash),
 	Allow = [ read(_,_), write(_,annotate) ],
 	user_add(User, [realname(RealName), password(Hash), allow(Allow)]),
-	reply_login([user(User), password(Password)]).
+	reply_login([user(User), password(Password)], [text/html]).
 
 
 %%	edit_user_form(+Request)
@@ -443,7 +363,7 @@ edit_user(Request) :-
 			]),
 	modify_user(User, realname(RealName)),
 	modify_permissions(User, Read, Write, Admin),
-	list_users(Request).
+	users_handler(Request).
 
 
 modify_user(User, Property) :-
@@ -493,14 +413,18 @@ del_user(Request) :- !,
 	;   true
 	),
 	user_del(User),
-	list_users(Request).
+	users_handler(Request).
 
 
 		 /*******************************
 		 *	       LOGIN		*
 		 *******************************/
 
-reply_login(Options) :-
+reply_login(Opts, MTs) :-
+  member(MT, MTs),
+  reply_login_(Opts, MT), !.
+
+reply_login_(Options, text/html) :-
 	option(user(User), Options),
 	option(password(Password), Options),
 	validate_password(User, Password), !,
@@ -511,7 +435,7 @@ reply_login(Options) :-
 			    \cp_title(["Login OK"]),
 			    h1(align(center), ["Welcome ",\quote(User),"!"]))
 	).
-reply_login(_) :-
+reply_login_(_, text/html) :-
 	reply_html_page(cliopatria(default),
 			title('Login failed'),
 			[ h1('Login failed'),
@@ -639,7 +563,7 @@ add_openid_server(Request) :-
 		  ],
 	remove_optional(Options, Properties),
 	openid_add_server(Server, Properties),
-	list_users(Request).
+	users_handler(Request).
 
 remove_optional([], []).
 remove_optional([H|T0], [H|T]) :-
@@ -778,7 +702,7 @@ edit_openid_server(Request) :-
 			]),
 	modify_openid(Server, description(Description)),
 	openid_modify_permissions(Server, Read, Write, Admin),
-	list_users(Request).
+	users_handler(Request).
 
 
 modify_openid(User, Property) :-
@@ -808,7 +732,7 @@ del_openid_server(Request) :- !,
 			[ attribute_declarations(attribute_decl)
 			]),
 	openid_del_server(Server),
-	list_users(Request).
+	users_handler(Request).
 
 
 		 /*******************************
