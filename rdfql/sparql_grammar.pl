@@ -31,20 +31,22 @@
 :- module(sparql_grammar,
 	  [ sparql_parse/3		% +In, -Query, +Options
 	  ]).
-:- use_module(library(pure_input)).
-:- use_module(library(semweb/rdf_db)).
-:- use_module(library(error), [must_be/2]).
-:- use_module(library(lists)).
+
+:- use_module(library(apply)).
 :- use_module(library(assoc)).
-:- use_module(library(uri)).
+:- use_module(library(debug)).
+:- use_module(library(error)).
+:- use_module(library(lists)).
 :- use_module(library(option)).
+:- use_module(library(ordsets)).
+:- use_module(library(pure_input)).
+:- use_module(library(q/q_term)).
 :- use_module(library(record)).
+:- use_module(library(semweb/rdf11)).
+:- use_module(library(uri)).
+
 :- use_module(jena_properties).
 :- use_module(text_properties).
-:- use_module(library(debug)).
-:- use_module(library(apply)).
-:- use_module(library(ordsets)).
-
 
 /** <module> SPARQL Parser
 
@@ -76,18 +78,14 @@ sparql_parse(Atomic, Query, Options) :-
 	atom_codes(Atomic, Codes),
 	sparql_parse(Codes, Query, Options).
 sparql_parse(Input, _, _) :-
-	throw(error(type_error(text, Input), _)).
+	type_error(text, Input).
 
 
 		 /*******************************
 		 *	       ERRORS		*
 		 *******************************/
 
-syntax_error(What) :-
-	throw(error(syntax_error(sparql(What)), _)).
-
-add_error_location(error(syntax_error(What), Location),
-		   Input) :-
+add_error_location(error(syntax_error(What), Location), Input) :-
 	subsumes_term(end_of_file-CharCount, Location),
 	end_of_file-CharCount = Location,
 	length(After, CharCount),
@@ -112,8 +110,7 @@ add_error_location(error(syntax_error(What), Location),
 	append(Here, AC, HAC),
 	append([0'\n|BC], HAC, ContextCodes),
 	atom_codes(Context, ContextCodes), !,
-	throw(error(syntax_error(sparql(What)),
-		    context(_, Context))).
+	throw(error(syntax_error(sparql(What)),context(_,Context))).
 add_error_location(Error, _Input) :-
 	throw(Error).
 
@@ -271,7 +268,7 @@ resolve_query(rdf(Subj0,P0,O0), Q, S0, S) :-
 	length(ArgList, ArgCount),
 	(   sparql:current_functional_property(P1, P, ArgCount)
 	->  true
-	;   throw(error(existence_error(functional_property, FP), _))
+	;   existence_error(functional_property, FP)
 	),
 	mkconj(Q1, Q2, Q12),
 	FuncProp = sparql:functional_property(Subj, FP),
@@ -466,12 +463,9 @@ resolve_graph_term(var(Name), Var, true, S0, S) :- !,
 	resolve_var(Name, Var, S0, S).
 resolve_graph_term(T, IRI, true, S, S) :-
 	resolve_iri(T, IRI, S), !.
-resolve_graph_term(literal(type(IRI0, Value)),
-		   literal(type(IRI, Value)), true, S, S) :- !,
-	resolve_iri(IRI0, IRI, S).
-resolve_graph_term(boolean(Val),
-		   literal(type(Type, Val)), true, S, S) :- !,
-	rdf_equal(Type, xsd:boolean).
+resolve_graph_term(Val^^D0, Val^^D, true, S, S) :- !,
+	resolve_iri(D0, D, S).
+resolve_graph_term(boolean(Val), Val^^xsd:boolean, true, S, S) :- !.
 resolve_graph_term(collection(Members), CollSubj, Q, S0, S) :- !,
 	mkcollection(Members, CollSubj, Triples, []),
 	resolve_query(Triples, Q, S0, S).
@@ -763,7 +757,7 @@ resolve_prefix(P, IRI, State) :-
 	->  true
 	;   rdf_db:ns(P, IRI)		% Extension: database known
 	->  true
-	;   throw(error(existence_error(prefix, P), _))
+	;   existence_error(prefix, P)
 	).
 
 %%	resolve_values(+Values0, -Values, +State) is det.
@@ -2343,12 +2337,12 @@ must_see_var(_) -->
 
 %%	graph_term(-T)//
 
-graph_term(T)    --> iri_ref(T), !.
-graph_term(T)    --> rdf_literal(T), !.
-graph_term(T)    --> numeric_literal(T), !.
-graph_term(T)    --> boolean_literal(T), !.
-graph_term(T)	 --> blank_node(T).
-graph_term(T)	 --> nil(T).
+graph_term(T) --> iri_ref(T), !.
+graph_term(T) --> rdf_literal(T), !.
+graph_term(T) --> numeric_literal(T), !.
+graph_term(T) --> boolean_literal(T), !.
+graph_term(T) --> blank_node(T).
+graph_term(T) --> nil(T).
 
 
 %%	expression(-E)//
@@ -2728,17 +2722,18 @@ iri_ref_or_function(Term) -->
 
 %%	rdf_literal(-Literal)//
 
-rdf_literal(literal(Value)) -->
-	string(String),
-	(   langtag(Lang)
-	->  { Value = lang(Lang, String) }
-	;   "^^", iri_ref(IRI)
-	->  { Value = type(IRI, String) }
-	;   { Value = String }
+rdf_literal(Lit) -->
+	string(Lex),
+	(   langtag(LTag)
+	->  {rdf_equal(D, rdf:langString)}
+	;   "^^"
+	->  iri_ref(D)
+	;   {rdf_equal(D, xsd:string)}
 	),
+	{q_literal(Lit, D, Lex, LTag)},
 	skip_ws.
 
-%%	numeric_literal(-Number)//
+%%	numeric_literal(-Lit)//
 %
 %	Match a literal value and return it as a term
 %
@@ -2749,27 +2744,25 @@ rdf_literal(literal(Value)) -->
 %	using atom_number/2 because floats and decimals can start or end
 %	with a '.', something which is not allowed in Prolog.
 
-numeric_literal(literal(type(Type, Value))) -->
+numeric_literal(Lit) -->
 	optional_pm(Codes, CV),
 	(   double_string(CV)
-	->  { rdf_equal(xsd:double, Type) }
+	->  {rdf_equal(xsd:double, D)}
 	;   decimal_string(CV)
-	->  { rdf_equal(xsd:decimal, Type) }
+	->  {rdf_equal(xsd:decimal, D)}
 	;   integer_string(CV)
-	->  { rdf_equal(xsd:integer, Type) }
+	->  {rdf_equal(xsd:integer, D)}
 	), !,
-	{ atom_codes(Value, Codes)
-	},
+	{
+    atom_codes(Lex, Codes),
+	  q_literal(Lit, D, Lex, _)
+  },
 	skip_ws.
 
 %%	boolean_literal(-TrueOrFalse)//
 
-boolean_literal(Lit) -->
-	(   keyword("true")
-	->  { Lit = boolean(true) }
-	;   keyword("false")
-	->  { Lit = boolean(false) }
-	).
+boolean_literal(true^^xsd:boolean) --> keyword("true").
+boolean_literal(false^^xsd:boolean) --> keyword("false").
 
 %%	string(-Atom)//
 
