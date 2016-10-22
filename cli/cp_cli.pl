@@ -32,24 +32,36 @@
 
 
 sp2b(Name) :-
+  sp2b_name_path(Name, Path),
+  debug(sparql(sp2b), "SP2B: ~a", [Name]),
+  call_on_stream(Path, sp2b_stream).
+
+sp2b_dir(Dir) :-
   absolute_file_name(
     cpack(sp2b/queries),
     Dir,
     [access(read),file_type(directory)]
-  ),
+  ).
+
+sp2b_name_path(Name, Path) :-
+  var(Name), !,
+  sp2b_dir(Dir),
   findall(
-    Name-Path,
+    Name0-Path0,
     (
-      directory_path(Dir, Path),
-      file_name_extension(Name, sparql, Path)
+      directory_path(Dir, Path0),
+      file_name_extension(Name0, sparql, Path0)
     ),
     Pairs
   ),
   asc_pairs(Pairs, SortedPairs),
-  member(Name-Path, SortedPairs),
-  call_on_stream(Path, sp2b).
+  member(Name-Path, SortedPairs).
+sp2b_name_path(Name, Path) :-
+  file_name_extension(Name, sparql, Local),
+  sp2b_dir(Dir),
+  directory_file_path(Dir, Local, Path).
 
-sp2b(In, L, L) :-
+sp2b_stream(In, L, L) :-
   read_stream_to_atom(In, Query),
   debug(sparql(query), "QUERY:~n~w", [Query]),
   forall(
