@@ -40,6 +40,7 @@
 :- use_module(library(lists)).
 :- use_module(library(pairs)).
 :- use_module(library(q/q_optimise)).
+:- use_module(library(q/q_stat)).
 :- use_module(library(ordsets)).
 :- use_module(library(ugraphs)).
 
@@ -823,46 +824,32 @@ simplify_carthesian(Bags, rdfql_carthesian(Bags)).
 %	ISSUES: rdf_has/3 vs rdf_reachable/3.
 
 complexity0(+(_),+(_),+(_), _, _, 1, 0, 1) :- !.
-complexity0(+(b),+(+),-, P, G, 1, 1, B) :- !,
-	subj_branch_factor(G, B, Prop),
-	rdf_predicate_property(P, Prop).
-complexity0(-,+(+),+(b), P, G, 1, 1, B) :- !,
-	obj_branch_factor(G, B, Prop),
-	rdf_predicate_property(P, Prop).
-complexity0(+(b), -, -, _, _, 1, 1, B) :- !,
-	rdf_statistics(triples(Total)),
-	subject_count(Subjs),
-	(   Total == 0
-	->  B = 0
-	;   B is Total/Subjs
-	).
+complexity0(+(b),+(+),-, P, Goal, 1, 1, B) :- !,
+	rdf_db_goal(Goal, M, _, _, _, G),
+	q_subject_branching_factor(M, P, G, B).
+complexity0(-,+(+),+(b), P, Goal, 1, 1, B) :- !,
+	rdf_db_goal(Goal, M, _, _, _, G),
+	q_object_branching_factor(M, P, G, B).
+complexity0(+(b), -, -, _, Goal, 1, 1, B) :- !,
+	rdf_db_goal(Goal, M, _, _, _, G),
+	q_number_of_triples(M, G, NumTriples),
+	q_number_of_subjects(M, G, NumSs),
+	(NumSs =:= 0 -> B = 0.0	; B is NumTriples/NumSs).
 complexity0(_,_,+(like(Pat)),_, Goal, Factor, Factor, B) :- !,
-	rdf_estimate_complexity(Goal, B0),
+	rdf_db_goal(Goal, M, S, P, O, G),
+	q_estimate_complexity(M, S, P, O, G, B0),
 	pattern_filter(Pat, Factor0),
 	Factor is max(1, min(B0, Factor0)/10),
 	B is B0/Factor.
 complexity0(_,_,_, _, Goal, 1, 1, B) :-
-	rdf_estimate_complexity(Goal, B).
+	rdf_db_goal(Goal, M, S, P, O, G),
+	q_estimate_complexity(M, S, P, O, G, B).
 
-:- if(rdf_statistics(subjects(_))).
-subject_count(Count) :-				% RDF-DB 2.x
-	rdf_statistics(subjects(Count)).
-:- else.
-subject_count(Count) :-				% RDF-DB 3.x
-	rdf_statistics(resources(Count)).
-:- endif.
-
-:- multifile
-        subj_branch_factor/3,
-        obj_branch_factor/3.
-
-subj_branch_factor(rdf(_,_,_),           X, rdf_subject_branch_factor(X)).
-subj_branch_factor(rdf_has(_,_,_),       X, rdfs_subject_branch_factor(X)).
-subj_branch_factor(rdf_reachable(_,_,_), X, rdfs_subject_branch_factor(X)).
-
-obj_branch_factor(rdf(_,_,_),            X, rdf_object_branch_factor(X)).
-obj_branch_factor(rdf_has(_,_,_),        X, rdfs_object_branch_factor(X)).
-obj_branch_factor(rdf_reachable(_,_,_),  X, rdfs_object_branch_factor(X)).
+% @tbd.
+%subj_branch_factor(rdf_has(_,_,_),       X, rdfs_subject_branch_factor(X)).
+%subj_branch_factor(rdf_reachable(_,_,_), X, rdfs_subject_branch_factor(X)).
+%obj_branch_factor(rdf_has(_,_,_),        X, rdfs_object_branch_factor(X)).
+%obj_branch_factor(rdf_reachable(_,_,_),  X, rdfs_object_branch_factor(X)).
 
 
 %%	rdf_db_goal(+Goal, -M, -S, -P, -O, ?G) is det.

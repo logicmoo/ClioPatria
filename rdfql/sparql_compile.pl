@@ -83,7 +83,7 @@ sparql_compile(
   q_rewrite(M, Parsed, Rewritten),
   debug(sparql(rewrite), "REWRITE:~n~w~n", [Rewritten]),
   
-  sparql_optimise(Rewritten, Optimised, Options),
+  optimise(Rewritten, Optimised, Options),
   debug(sparql(optimise), "OPTIMISED:~n~w~n", [Optimised]),
   
   (   option(entailment(Entailment), Options)
