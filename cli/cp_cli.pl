@@ -17,8 +17,10 @@
 :- use_module(library(debug)).
 :- use_module(library(http/http_io)).
 :- use_module(library(http/json)).
+:- use_module(library(lists)).
 :- use_module(library(os/file_ext)).
 :- use_module(library(os/io)).
+:- use_module(library(pair_ext)).
 :- use_module(library(iri/iri_ext)).
 :- use_module(library(lists)).
 
@@ -35,16 +37,24 @@ sp2b(Name) :-
     Dir,
     [access(read),file_type(directory)]
   ),
-  directory_path(Dir, Path),
-  file_name_extension(Name, sparql, Path),
+  findall(
+    Name-Path,
+    (
+      directory_path(Dir, Path),
+      file_name_extension(Name, sparql, Path)
+    ),
+    Pairs
+  ),
+  asc_pairs(Pairs, SortedPairs),
+  member(Name-Path, SortedPairs),
   call_on_stream(Path, sp2b).
 
 sp2b(In, L, L) :-
   read_stream_to_atom(In, Query),
   debug(sparql(query), "QUERY:~n~w", [Query]),
   forall(
-    cp_sparql_query(Query, _Reply),
-    format(user_output, ".", [])
+    cp_sparql_query(Query, Reply),
+    format(user_output, "~w~n", [Reply])
   ).
 
 
