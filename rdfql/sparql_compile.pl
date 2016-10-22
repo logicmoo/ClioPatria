@@ -82,7 +82,7 @@ sparql_compile(
   
   q_rewrite(M, Parsed, Rewritten),
   debug(sparql(rewrite), "REWRITE:~n~w~n", [Rewritten]),
-  
+
   optimise(Rewritten, Optimised, Options),
   debug(sparql(optimise), "OPTIMISED:~n~w~n", [Optimised]),
   
@@ -96,6 +96,12 @@ sparql_compile(
   prepare(Parsed, Type, Order, Distinct, ReplyTemplate).
 
 
+q_rewrite(
+  M,
+  ask(Projections,Query0,Solutions),
+  ask(Projections,Query,Solutions)
+) :- !,
+  q_rewrite_query(M, Query0, Query).
 q_rewrite(
   M,
   select(Projections,Datasets,Query0,Solutions),
