@@ -3,7 +3,7 @@
 	url = https://github.com/TSO-Openup/FlintSparqlEditor.git
 [submodule "test/Tests/sparql-1.1"]
 	path = test/Tests/sparql-1.1
-	url = ../sparql-1.1-test-cases.git
+	url = https://github.com/ClioPatria/sparql-1.1-test-cases.git
 [submodule "web/yasqe"]
 	path = web/yasqe
 	url = https://github.com/YASGUI/YASQE.git
