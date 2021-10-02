@@ -84,8 +84,7 @@ in:
     ==
 */
 
-:- http_handler(root('.'),			     root,
-		[ priority(-100) ]).
+:- http_handler(root('.'),			     root,  [ priority(-100) ]).
 :- http_handler(cliopatria(home),		     home,
 		[ priority(-100) ]).
 :- http_handler(cliopatria(admin),		     home,
@@ -278,7 +277,7 @@ load_file_form(Request) :-
 			  \graph_script(Request)
 			]).
 
-explain_file_form -->
+explain_file_form -->      
 	html({|html||
 <p>Upload RDF to the ClioPatria triple store. The uploaded file may
 contain <a href="http://www.w3.org/TR/REC-rdf-syntax/">RDF/XML</a>, <a

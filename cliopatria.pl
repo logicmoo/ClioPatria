@@ -186,6 +186,7 @@ cp_server :-
 	).
 :- endif.
 
+% cp_server(M:List):- \+ member(prefix(_),List), !, cp_server(M:[prefix('/swish')|List]),!.
 cp_server(_Options) :-
 	setting(http:port, DefPort),
 	http_server_property(DefPort, goal(cp_server:http_dispatch)), !,
@@ -230,7 +231,7 @@ is_meta(after_load).
 
 set_prefix(Options) :-
 	option(prefix(Prefix), Options),
-	\+ setting(http:prefix, Prefix), !,
+   	\+ setting(http:prefix, Prefix), !,
 	set_setting_default(http:prefix, Prefix).
 set_prefix(_).
 
